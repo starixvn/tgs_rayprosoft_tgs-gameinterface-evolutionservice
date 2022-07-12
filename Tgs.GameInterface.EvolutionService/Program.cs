@@ -6,6 +6,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Tgs.GameInterface.EvolutionService;
 using Tgs.GameInterface.EvolutionService.Core.DependencyInjection;
+using Tgs.GameInterface.EvolutionService.GrpcServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -104,6 +105,6 @@ app.UseSwaggerUI();
 app.MapControllers();
 app.MapSwagger();
 app.MapHealthChecks("/healthz");
-//app.MapGrpcService<GameInterfaceEvoGrpcService>();
+app.MapGrpcService<GameInterfaceEvoGrpcService>();
 
 app.Run();

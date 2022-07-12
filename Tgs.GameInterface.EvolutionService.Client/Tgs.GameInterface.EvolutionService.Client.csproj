@@ -7,12 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\**" />
-    <EmbeddedResource Remove="Models\**" />
-    <None Remove="Models\**" />
-  </ItemGroup>
-
-  <ItemGroup>
 	  <PackageReference Include="Google.Protobuf" Version="3.21.2" />
 	  <PackageReference Include="Grpc.Net.ClientFactory" Version="2.46.0" />
 	  <PackageReference Include="Grpc.Tools" Version="2.46.3">
