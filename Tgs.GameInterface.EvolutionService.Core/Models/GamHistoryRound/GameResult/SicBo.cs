@@ -1,0 +1,14 @@
+﻿using System.Text.Json.Serialization;
+
+namespace Tgs.GameInterface.EvolutionService.Core.Models.GamHistoryRound.GameResult
+{
+    public record SicBo
+    {
+        [JsonPropertyName("first")]
+        public int First { get; set; }
+        [JsonPropertyName("second")]
+        public int Second { get; set; }
+        [JsonPropertyName("third")]
+        public int Third { get; set; }
+    }
+}
