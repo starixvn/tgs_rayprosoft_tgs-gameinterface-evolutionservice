@@ -36,12 +36,12 @@ public class CreditUnitTest
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, "/api/ecashier")
             .WithQueryString("cCode", cCode)
-            .WithQueryString("ecId", ecId)
-            .WithQueryString("euId", playerCode)
+            .WithQueryString("ecID", ecId)
+            .WithQueryString("euID", playerCode)
             .WithQueryString("amount", amount.ToString())
-            .WithQueryString("etransid", transactionsId)
+            .WithQueryString("eTransID", transactionsId)
             .WithQueryString("createuser", "Y")
-            .WithQueryString("outPut", "1")
+            .WithQueryString("output", "1")
             .Respond(HttpStatusCode.OK, new StringContent(response, Encoding.UTF8, "application/xml"));
 
         var fakeHttpClient = handler.ToHttpClient();

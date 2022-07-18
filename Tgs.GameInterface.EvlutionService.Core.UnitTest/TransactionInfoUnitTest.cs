@@ -37,10 +37,10 @@ public class TransactionInfoUnitTest
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Get, "/api/ecashier")
             .WithQueryString("cCode", cCode)
-            .WithQueryString("ecId", ecId)
-            .WithQueryString("euId", playerCode)
-            .WithQueryString("eTransId", transactionsId)
-            .WithQueryString("outPut", "1")
+            .WithQueryString("ecID", ecId)
+            .WithQueryString("euID", playerCode)
+            .WithQueryString("eTransID", transactionsId)
+            .WithQueryString("output", "1")
             .Respond(HttpStatusCode.OK, new StringContent(response, Encoding.UTF8, "application/xml"));
 
         var fakeHttpClient = handler.ToHttpClient();
