@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Models\AuthenticationPlayer.cs" />
+    <Compile Remove="Models\AuthenticationPlayerSession.cs" />
+    <Compile Remove="Models\AuthenticationResult.cs" />
+    <Compile Remove="Models\ErrorResponse.cs" />
+    <Compile Remove="Models\GetAuthentication.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Tgs.Logging" Version="0.0.19" />
+    <PackageReference Include="TGS.ServiceUtility" Version="0.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+  </ItemGroup>
+
+</Project>
