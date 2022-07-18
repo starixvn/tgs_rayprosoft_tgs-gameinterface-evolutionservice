@@ -69,18 +69,25 @@ namespace Tgs.GameInterface.EvolutionService.Controllers
         /// </summary>
         /// <param name="service"></param>
         /// <param name="request"></param>
-        /// https://babylonpega2.uat1.evo-test.com/ua/v1/babylonpega20001/test123
+        /// "ua2AuthenticationUrl": "https://babylonpega2.uat1.evo-test.com/ua/v1/babylonpega20001/test123",
+        ///"apiUrl": "https://babylonpega2.uat1.evo-test.com",
+        ///"playerCode": "4ucmqplxb029",
+        ///"gameType": "Sportsbook",
+        ///"platformType": "Desktop",
+        ///"ipAddress": "50.50.50.50",
+        ///"encryptedToken": "test123",
+        ///"externalCultureCode": "cn",
+        ///"externalCurrencyCode": "CNY",
+        ///"externalGameId": "dracula000000000"
         /// <returns></returns>
-        [HttpPost("gameurl")]
-        public async ValueTask<GameUrlResponse> GameUrlAsync(
-            [FromServices] IGetService<GetGameUrlQuery, GameUrlResult> service,
+        [HttpPost("liveDealerGameUrl")]
+        public async ValueTask<GameUrlResponse> GetLiveDealerGameUrlAsync(
+            [FromServices] IGetService<GetLiveDealerGameUrlQuery, GameUrlResult> service,
             GetGameUrlRequest request)
         {
-            var result = await service.GetAsync(new GetGameUrlQuery(
+            var result = await service.GetAsync(new GetLiveDealerGameUrlQuery(
                 request.Ua2AuthenticationUrl,
-                request.ApiUrl,
                 request.PlayerCode,
-                request.GameType,
                 request.PlatformType,
                 request.IpAddress,
                 request.EncryptedToken,
@@ -89,7 +96,29 @@ namespace Tgs.GameInterface.EvolutionService.Controllers
                 request.ExternalGameId)).ConfigureAwait(false);
 
             return new GameUrlResponse(
-                result.GameUrl,
+                result.Entry,
+                result.EntryEmbedded,
+                result.ErrorMessages);
+        }
+
+        [HttpPost("slotGameUrl")]
+        public async ValueTask<GameUrlResponse> GetSlotGameUrlAsync(
+            [FromServices] IGetService<GetSlotGameUrlQuery, GameUrlResult> service,
+            GetGameUrlRequest request)
+        {
+            var result = await service.GetAsync(new GetSlotGameUrlQuery(
+                request.Ua2AuthenticationUrl,
+                request.PlayerCode,
+                request.PlatformType,
+                request.IpAddress,
+                request.EncryptedToken,
+                request.ExternalCultureCode,
+                request.ExternalCurrencyCode,
+                request.ExternalGameId)).ConfigureAwait(false);
+
+            return new GameUrlResponse(
+                result.Entry,
+                result.EntryEmbedded,
                 result.ErrorMessages);
         }
 
@@ -169,8 +198,45 @@ namespace Tgs.GameInterface.EvolutionService.Controllers
             return await service.GetAsync(new KickPlayerQuery(
                 request.ApiUrl,
                 request.CasinoId,
-                request.ApiToken
+                request.ApiToken,
+                request.Uuid,
+                request.PlayerCode
             )).ConfigureAwait(false);
+        }
+
+        [HttpPost("gameHistories")]
+        public async ValueTask<GameHistoriesResponse> GetGameHistoriesAsync(
+            [FromServices] IGetService<GetGameHistoriesQuery, GameHistoriesResult> service,
+            GetGameHistoriesRequest request)
+        {
+            var result = await service.GetAsync(new GetGameHistoriesQuery(
+                request.ApiUrl,
+                request.Authorization,
+                request.StartDate,
+                request.EndDate,
+                request.GameType,
+                request.Channel,
+                request.GameProvider,
+                request.TransactionId,
+                request.OwTransactionId,
+                request.Rounding
+            )).ConfigureAwait(false);
+
+            return new GameHistoriesResponse
+            {
+                GameHistoryRecords = result.GameHistoryRecords.Select(x => new GameHistoryRecordResponse
+                {
+                    PlayerCode = x.PlayerCode,
+                    ExternalRoundId = x.ExternalRoundId,
+                    ExternalGameId = x.ExternalGameId,
+                    ExternalCreatedOn = x.ExternalCreatedOn,
+                    ExternalClosedOn = x.ExternalClosedOn,
+                    BetAmount = x.BetAmount,
+                    ValidBetAmount = x.ValidBetAmount,
+                    SettleAmount = x.SettleAmount,
+                    AdditionalData = x.AdditionalData
+                })
+            };
         }
 
     }

@@ -2,37 +2,50 @@
 
 import "google/protobuf/timestamp.proto";
 import "phoenix/protobuf/decimal.proto";
+import "google/protobuf/wrappers.proto";
 
 option csharp_namespace = "Tgs.GameInterface.EvolutionService.Protos";
 
 package GameInterfaceEvoService;
 
 service GameInterfaceEvoService {
-	rpc GetGameUrl (GetGameUrlRequest) returns (GameUrlReply);
+	rpc GetLiveDealerGameUrl (GetLiveDealerGameUrlRequest) returns (GameUrlReply);
+	rpc GetSlotGameUrl (GetSlotGameUrlRequest) returns (GameUrlReply);
 	rpc FundIn (FundInRequest) returns (FundInReply);
 	rpc FundOut (FundOutRequest) returns (FundOutReply);
 	rpc GetBalance (GetBalanceRequest) returns (GetBalanceReply);
 	rpc GetPlayerInfo (GetPlayerInfoRequest) returns (GetPlayerInfoReply);
 	rpc GetTransactionInfo (GetTransactionInfoRequest) returns (GetTransactionInfoReply);
 	rpc KickPlayer (KickPlayerRequest) returns (KickPlayerReply);
+	rpc GetGameHistories (GetGameHistoriesRequest) returns (GetGameHistoriesReply);
 }
 
-message GetGameUrlRequest {
+message GetLiveDealerGameUrlRequest {
 	string ua2_authentication_url = 1;
-	string api_url = 2;
-	string player_code = 3;
-	int32 game_type= 4;
-	int32 platform_type= 5;
-	string ip_address= 6;
-	string encrypted_token = 7;
-	string external_culture_code = 8;
-	string external_currency_code = 9;
-	string external_game_id = 10;
+	string player_code = 2;
+	int32 platform_type= 3;
+	string ip_address= 4;
+	string encrypted_token = 5;
+	string external_culture_code = 6;
+	string external_currency_code = 7;
+	string external_game_id = 8;
+}
+
+message GetSlotGameUrlRequest {
+	string ua2_authentication_url = 1;
+	string player_code = 2;
+	int32 platform_type= 3;
+	string ip_address= 4;
+	string encrypted_token = 5;
+	string external_culture_code = 6;
+	string external_currency_code = 7;
+	string external_game_id = 8;
 }
 
 message GameUrlReply {
-	string url = 1;
-	repeated Error errors = 2;
+	string entry = 1;
+	string entry_embedded = 2;
+	repeated Error errors = 3;
 }
 
 message Error
@@ -134,8 +147,39 @@ message KickPlayerRequest {
 	string api_url = 1;
 	string casino_id = 2;
 	string api_token = 3;
+	string uuid = 4;
+	string player_code = 5;
 }
 
 message KickPlayerReply {
 	bool result = 1;
+}
+
+message GetGameHistoriesRequest {
+	string api_url = 1;
+	string authorization = 2;
+	google.protobuf.Timestamp start_date = 3; 
+	google.protobuf.Timestamp end_date = 4; 
+	string game_type = 5; 
+	string channel = 6; 
+	string game_provider = 7; 
+	string transaction_id = 8;
+	string ow_transaction_id = 9;
+	bool rounding = 10;
+}
+
+message GetGameHistoriesReply {
+	repeated GameHistoryRecord records = 1;
+}
+
+message GameHistoryRecord {
+	string player_code = 1;
+	string external_round_id = 2;
+	string ExternalGameId = 3;
+	google.protobuf.Timestamp ExternalCreatedOn = 4;
+	google.protobuf.Timestamp ExternalClosedOn = 5;
+	phoenix.protobuf.DecimalValue BetAmount = 6;
+	phoenix.protobuf.DecimalValue ValidBetAmount = 7;
+	phoenix.protobuf.DecimalValue SettleAmount = 8;
+	string AdditionalData = 9;
 }

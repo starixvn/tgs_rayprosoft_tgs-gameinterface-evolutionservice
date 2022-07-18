@@ -3,4 +3,6 @@
 public record KickPlayerRequest(
     Uri ApiUrl,
     string CasinoId,
-    string ApiToken);
+    string ApiToken,
+    string Uuid,
+    string PlayerCode);

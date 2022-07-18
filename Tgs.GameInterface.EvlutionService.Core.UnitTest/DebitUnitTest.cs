@@ -23,7 +23,6 @@ namespace Tgs.GameInterface.EvolutionService.Core.UnitTest
             var apiUrl = new Uri("http://localhost");
             var cCode = "EDB";
             var ecId = "ecId";
-            var uId = "uId";
             var playerCode = "4ucmqplxb029";
             var amount = 100;
             var transactionsId = "transactionsId";

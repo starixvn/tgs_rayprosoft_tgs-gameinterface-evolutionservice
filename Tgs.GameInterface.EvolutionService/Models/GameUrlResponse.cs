@@ -3,5 +3,6 @@
 namespace Tgs.GameInterface.EvolutionService.Models;
 
 public record GameUrlResponse(
-    string? GameUrl,
+    string? Entry,
+    string? EntryEmbedded,
     Error[]? ErrorMessages);

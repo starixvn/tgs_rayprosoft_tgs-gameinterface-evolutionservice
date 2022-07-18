@@ -17,6 +17,8 @@ internal class KickPlayerQueryService : IGetService<KickPlayerQuery, bool>
             query.ApiUrl,
             query.CasinoId,
             query.ApiToken,
+            query.Uuid,
+            query.PlayerCode,
             cancellationToken).ConfigureAwait(false);
     }
 }

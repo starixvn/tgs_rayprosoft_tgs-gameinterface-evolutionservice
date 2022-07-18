@@ -1,8 +1,8 @@
 ﻿using System.Text;
 using System.Text.Json;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.Options;
 using Tgs.GameInterface.EvolutionService.Protos;
-using GetGameUrlRequest = Tgs.GameInterface.EvolutionService.Protos.GetGameUrlRequest;
 
 namespace Tgs.GameInterface.EvolutionService.Client
 {
@@ -15,11 +15,9 @@ namespace Tgs.GameInterface.EvolutionService.Client
             _client = client;
         }
 
-        public async ValueTask<GameUrlReply> GetGameUrlAsync(
+        public async ValueTask<GameUrlReply> GetLiveDealerGameUrlAsync(
             Uri ua2AuthenticationUrl,
-            Uri apiUrl,
             string playerCode,
-            short gameType,
             short platformType,
             string ipAddress,
             string encryptedToken,
@@ -28,12 +26,10 @@ namespace Tgs.GameInterface.EvolutionService.Client
             string externalGameId, 
             CancellationToken cancellationToken = default)
         {
-            return await _client.GetGameUrlAsync(new GetGameUrlRequest
+            return await _client.GetLiveDealerGameUrlAsync(new GetLiveDealerGameUrlRequest
             {
                 Ua2AuthenticationUrl = ua2AuthenticationUrl.ToString(),
-                ApiUrl = apiUrl.ToString(),
                 PlayerCode = playerCode,
-                GameType = gameType,
                 PlatformType = platformType,
                 IpAddress = ipAddress,
                 EncryptedToken = encryptedToken,
@@ -41,6 +37,29 @@ namespace Tgs.GameInterface.EvolutionService.Client
                 ExternalCurrencyCode= externalCurrencyCode,
                 ExternalGameId= externalGameId
             },cancellationToken: cancellationToken);
+        }
+        public async ValueTask<GameUrlReply> GetSlotGameUrlAsync(
+            Uri ua2AuthenticationUrl,
+            string playerCode,
+            short platformType,
+            string ipAddress,
+            string encryptedToken,
+            string externalCultureCode,
+            string externalCurrencyCode,
+            string externalGameId,
+            CancellationToken cancellationToken = default)
+        {
+            return await _client.GetSlotGameUrlAsync(new GetSlotGameUrlRequest
+            {
+                Ua2AuthenticationUrl = ua2AuthenticationUrl.ToString(),
+                PlayerCode = playerCode,
+                PlatformType = platformType,
+                IpAddress = ipAddress,
+                EncryptedToken = encryptedToken,
+                ExternalCultureCode = externalCultureCode,
+                ExternalCurrencyCode = externalCurrencyCode,
+                ExternalGameId = externalGameId
+            }, cancellationToken: cancellationToken);
         }
 
         public async ValueTask<FundInReply> FundInAsync(Uri apiUrl, string agentId, string playerCode, string transactionId, decimal amount, CancellationToken cancellationToken = default) 
@@ -89,6 +108,34 @@ namespace Tgs.GameInterface.EvolutionService.Client
                 AgentId = agentId,
                 PlayerCode = playerCode,
                 TransactionId = transactionId,
+            }, cancellationToken: cancellationToken);
+
+        public async ValueTask<KickPlayerReply> KickPlayerAsync(Uri apiUrl, string casinoId, string apiToken, string uuid, string playerCode,
+            CancellationToken cancellationToken = default)
+            => await _client.KickPlayerAsync(new KickPlayerRequest
+            {
+                ApiUrl = apiUrl.ToString(),
+                CasinoId = casinoId,
+                ApiToken = apiToken,
+                Uuid = uuid,
+                PlayerCode = playerCode,
+            }, cancellationToken: cancellationToken);
+
+        public async ValueTask<GetGameHistoriesReply> GetGameHistoriesAsync(Uri apiUrl, string authorization, DateTimeOffset? startDate, DateTimeOffset? endDate,
+            string? gameType, string? channel, string? gameProvider, string? transactionId, string? owTransactionId,
+            bool? rounding, CancellationToken cancellationToken = default)
+            => await _client.GetGameHistoriesAsync(new GetGameHistoriesRequest
+            {
+                ApiUrl = apiUrl.ToString(),
+                Authorization = authorization,
+                StartDate = startDate?.ToTimestamp(),
+                EndDate = endDate?.ToTimestamp(),
+                GameType = gameType,
+                Channel = channel,
+                GameProvider = gameProvider,
+                TransactionId = transactionId,
+                OwTransactionId = owTransactionId,
+                Rounding = rounding ?? true
             }, cancellationToken: cancellationToken);
     }
 }

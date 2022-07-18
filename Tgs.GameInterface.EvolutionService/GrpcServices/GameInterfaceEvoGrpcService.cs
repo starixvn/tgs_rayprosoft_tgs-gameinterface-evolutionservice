@@ -9,44 +9,46 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
 {
     public class GameInterfaceEvoGrpcService : GameInterfaceEvoService.GameInterfaceEvoServiceBase
     {
-        private readonly IGetService<GetGameUrlQuery, GameUrlResult> _getGameUrlService;
+        private readonly IGetService<GetLiveDealerGameUrlQuery, GameUrlResult> _getLiveDealerGameUrlService;
+        private readonly IGetService<GetSlotGameUrlQuery, GameUrlResult> _getSlotGameUrlService;
         private readonly IGetService<CreditQuery, CreditResult> _creditService;
         private readonly IGetService<DebitQuery, DebitResult> _debitService;
         private readonly IGetService<GetBalanceQuery, BalanceResult> _getBalanceService;
         private readonly IGetService<GetPlayerInfoQuery, PlayerInfoResult> _getPlayerInfoService;
         private readonly IGetService<GetTransactionInfoQuery, TransactionInfoResult> _getTransactionInfoService;
         private readonly IGetService<KickPlayerQuery, bool> _kickPlayerService;
+        private readonly IGetService<GetGameHistoriesQuery, GameHistoriesResult> _getGameHistoryService;
 
         public GameInterfaceEvoGrpcService(
-            IGetService<GetGameUrlQuery, GameUrlResult> getGameUrlService,
+            IGetService<GetLiveDealerGameUrlQuery, GameUrlResult> getLiveDealerGameUrlService,
+            IGetService<GetSlotGameUrlQuery, GameUrlResult> getSlotGameUrlService,
             IGetService<CreditQuery, CreditResult> creditService,
             IGetService<DebitQuery, DebitResult> debitService,
             IGetService<GetBalanceQuery, BalanceResult> getBalanceService,
             IGetService<GetPlayerInfoQuery, PlayerInfoResult> getPlayerInfoService,
             IGetService<GetTransactionInfoQuery, TransactionInfoResult> getTransactionInfoService,
-            IGetService<KickPlayerQuery, bool> kickPlayerService)
+            IGetService<KickPlayerQuery, bool> kickPlayerService,
+            IGetService<GetGameHistoriesQuery, GameHistoriesResult> getGameHistoryService)
         {
-            _getGameUrlService = getGameUrlService ?? throw new ArgumentNullException(nameof(getGameUrlService));
+            _getLiveDealerGameUrlService = getLiveDealerGameUrlService ?? throw new ArgumentNullException(nameof(getLiveDealerGameUrlService));
+            _getSlotGameUrlService = getSlotGameUrlService ?? throw new ArgumentNullException(nameof(getSlotGameUrlService));
             _creditService = creditService ?? throw new ArgumentNullException(nameof(creditService));
             _debitService = debitService ?? throw new ArgumentNullException(nameof(debitService));
             _getBalanceService = getBalanceService ?? throw new ArgumentNullException(nameof(getBalanceService));
             _getPlayerInfoService = getPlayerInfoService ?? throw new ArgumentNullException(nameof(getPlayerInfoService));
             _getTransactionInfoService = getTransactionInfoService ?? throw new ArgumentNullException(nameof(getTransactionInfoService));
             _kickPlayerService = kickPlayerService ?? throw new ArgumentNullException(nameof(kickPlayerService));
+            _getGameHistoryService = getGameHistoryService ?? throw new ArgumentNullException(nameof(getGameHistoryService));
         }
 
-        public override async Task<GameUrlReply> GetGameUrl(GetGameUrlRequest request, ServerCallContext context)
+        public override async Task<GameUrlReply> GetLiveDealerGameUrl(GetLiveDealerGameUrlRequest request, ServerCallContext context)
         {
             var ua2AuthenticationUrl = new Uri(request.Ua2AuthenticationUrl);
-            var apiUrl = new Uri(request.ApiUrl);
-            var gameType = (GameType)request.GameType;
             var platformType = (PlatformType)request.PlatformType;
 
-            var response = await _getGameUrlService.GetAsync(new GetGameUrlQuery(
+            var response = await _getLiveDealerGameUrlService.GetAsync(new GetLiveDealerGameUrlQuery(
                 ua2AuthenticationUrl,
-                apiUrl,
                 request.PlayerCode,
-                gameType,
                 platformType,
                 request.IpAddress,
                 request.EncryptedToken,
@@ -56,7 +58,35 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
 
             return new GameUrlReply
             {
-                Url = response.GameUrl,
+                Entry = response.Entry ?? string.Empty,
+                EntryEmbedded = response.EntryEmbedded ?? string.Empty,
+                Errors = { response.ErrorMessages?.Select(x => new Error
+                {
+                    Code = x.Code,
+                    Message = x.Message
+                }) }
+            };
+        }
+
+        public override async Task<GameUrlReply> GetSlotGameUrl(GetSlotGameUrlRequest request, ServerCallContext context)
+        {
+            var ua2AuthenticationUrl = new Uri(request.Ua2AuthenticationUrl);
+            var platformType = (PlatformType)request.PlatformType;
+
+            var response = await _getSlotGameUrlService.GetAsync(new GetSlotGameUrlQuery(
+                ua2AuthenticationUrl,
+                request.PlayerCode,
+                platformType,
+                request.IpAddress,
+                request.EncryptedToken,
+                request.ExternalCultureCode,
+                request.ExternalCurrencyCode,
+                request.ExternalGameId));
+
+            return new GameUrlReply
+            {
+                Entry = response.Entry ?? string.Empty,
+                EntryEmbedded = response.EntryEmbedded ?? string.Empty,
                 Errors = { response.ErrorMessages?.Select(x => new Error
                 {
                     Code = x.Code,
@@ -127,7 +157,7 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
                 Uid = response.Uid,
                 ABalance = response.ABalance,
                 TBalance = response.TBalance,
-                ErrorMessage = response.ErrorMessage
+                ErrorMessage = response.ErrorMessage ?? string.Empty
             };
         }
 
@@ -149,7 +179,7 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
                 Lastname = response.Lastname,
                 ScreenName = response.ScreenName,
                 CountryCode = response.CountryCode,
-                ErrorMessage = response.ErrorMessage
+                ErrorMessage = response.ErrorMessage ?? string.Empty
             };
         }
 
@@ -175,7 +205,7 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
                 CreatedOnIso = response.CreatedOnISO.ToTimestamp(),
                 PlayerCode = response.PlayerCode,
                 Amount = response.Amount,
-                ErrorMessage = response.ErrorMessage
+                ErrorMessage = response.ErrorMessage ?? string.Empty
             };
         }
 
@@ -186,11 +216,46 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
             var response = await _kickPlayerService.GetAsync(new KickPlayerQuery(
                 apiUrl,
                 request.CasinoId,
-                request.ApiToken));
+                request.ApiToken,
+                request.Uuid,
+                request.PlayerCode));
 
             return new KickPlayerReply
             {
                 Result = response
+            };
+        }
+
+        public override async Task<GetGameHistoriesReply> GetGameHistories(GetGameHistoriesRequest request, ServerCallContext context)
+        {
+            var apiUrl = new Uri(request.ApiUrl);
+
+            var response = await _getGameHistoryService.GetAsync(new GetGameHistoriesQuery(
+                apiUrl,
+                request.Authorization,
+                request.StartDate.ToDateTimeOffset(),
+                request.EndDate.ToDateTimeOffset(),
+                request.GameType,
+                request.Channel,
+                request.GameProvider,
+                request.TransactionId,
+                request.OwTransactionId,
+                request.Rounding));
+
+            return new GetGameHistoriesReply
+            {
+                Records = {response.GameHistoryRecords.Select(x => new Protos.GameHistoryRecord
+                {
+                    PlayerCode = x.PlayerCode,
+                    ExternalRoundId = x.ExternalRoundId,
+                    ExternalGameId = x.ExternalGameId,
+                    ExternalCreatedOn = x.ExternalCreatedOn.ToTimestamp(),
+                    ExternalClosedOn = x.ExternalClosedOn.ToTimestamp(),
+                    BetAmount = x.BetAmount,
+                    ValidBetAmount = x.ValidBetAmount,
+                    SettleAmount = x.SettleAmount,
+                    AdditionalData = x.AdditionalData
+                })}
             };
         }
 

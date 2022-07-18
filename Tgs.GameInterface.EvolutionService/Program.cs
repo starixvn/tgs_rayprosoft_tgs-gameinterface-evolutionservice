@@ -21,6 +21,7 @@ builder.Services.AddGrpc(options =>
 {
     options.Interceptors.Add<LoggingInterceptor>();
 });
+builder.Services.AddGrpcReflection();
 
 builder.Logging
     .AddTgsLog()
@@ -107,4 +108,8 @@ app.MapSwagger();
 app.MapHealthChecks("/healthz");
 app.MapGrpcService<GameInterfaceEvoGrpcService>();
 
+if (app.Environment.IsDevelopment())
+{
+    app.MapGrpcReflectionService();
+}
 app.Run();

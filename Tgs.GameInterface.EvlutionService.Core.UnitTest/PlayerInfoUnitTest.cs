@@ -17,10 +17,7 @@ public class PlayerInfoUnitTest
         var apiUrl = new Uri("http://localhost");
         var cCode = "GUI";
         var ecId = "ecId";
-        var uId = "uId";
         var playerCode = "4ucmqplxb029";
-        var amount = 100;
-        var transactionsId = "transactionsId";
 
         var response = @"
                 <userdetails>

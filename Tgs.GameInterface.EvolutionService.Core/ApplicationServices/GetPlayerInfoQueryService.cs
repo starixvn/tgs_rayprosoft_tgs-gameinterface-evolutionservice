@@ -15,7 +15,7 @@ internal class GetPlayerInfoQueryService : IGetService<GetPlayerInfoQuery, Playe
     {
         var result = await _client.GetPlayerInfoAsync(
             query.ApiUrl,
-            "EDB",
+            "GUI",
             query.AgentId,
             query.PlayerCode,
             cancellationToken).ConfigureAwait(false);
