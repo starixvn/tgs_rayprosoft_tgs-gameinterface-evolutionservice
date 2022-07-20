@@ -16,9 +16,9 @@ public class PlayerInfoResponse
     [XmlElement("countrycode")]
     public string CountryCode { get; init; } = default!;
     [XmlElement("euid")]
-    public string EuId { get; init; } = default!;
+    public string EuId { get; init; } = string.Empty;
     [XmlElement("uid")]
-    public string Uid { get; init; } = default!;
+    public string Uid { get; init; } = string.Empty;
     [XmlElement("errormsg")]
     public string? ErrorMessage { get; init; }
 }

@@ -24,8 +24,9 @@ namespace Tgs.GameInterface.EvolutionService.Core.ApplicationServices
                  result.Result == "Y",
                  result.PlayerCode,
                  result.Uid,
-                 ABalance: result.ABalance,
                  TBalance: result.TBalance,
+                 ABalance: result.ABalance,
+                 result.Result == "N" && result.ErrorMessage?.Trim().ToLower() == "Invaliduser",
                  ErrorMessage: result.ErrorMessage);
         }
     }

@@ -1,4 +1,5 @@
-﻿using Google.Protobuf.WellKnownTypes;
+﻿using Google.Protobuf.Collections;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Tgs.GameInterface.EvolutionService.Core;
 using Tgs.GameInterface.EvolutionService.Core.ApplicationServices;
@@ -64,7 +65,7 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
                 {
                     Code = x.Code,
                     Message = x.Message
-                }) }
+                }) ?? new RepeatedField<Error>() }
             };
         }
 
@@ -91,7 +92,7 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
                 {
                     Code = x.Code,
                     Message = x.Message
-                }) }
+                }) ?? new RepeatedField<Error>() }
             };
         }
 
@@ -114,7 +115,7 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
                 PlayerCode = response.PlayerCode,
                 Uid = response.Uid,
                 Balance = response.Balance,
-                ErrorMessage = response.ErrorMessage
+                ErrorMessage = response.ErrorMessage ?? string.Empty
             };
         }
 
@@ -137,7 +138,7 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
                 PlayerCode = response.PlayerCode,
                 Uid = response.Uid,
                 Balance = response.Balance,
-                ErrorMessage = response.ErrorMessage
+                ErrorMessage = response.ErrorMessage ?? string.Empty
             };
         }
 
@@ -157,6 +158,7 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
                 Uid = response.Uid,
                 ABalance = response.ABalance,
                 TBalance = response.TBalance,
+                IsPlayerExist = response.IsPlayerExist,
                 ErrorMessage = response.ErrorMessage ?? string.Empty
             };
         }
@@ -201,7 +203,7 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
                 EvoTransactionId = response.EvoTransactionId,
                 EvoUid = response.EvoUid,
                 CCid = response.CCid,
-                CreatedOn = response.CreatedOn.ToTimestamp(),
+                CreatedOn = DateTime.SpecifyKind(response.CreatedOn, DateTimeKind.Utc).ToTimestamp(),
                 CreatedOnIso = response.CreatedOnISO.ToTimestamp(),
                 PlayerCode = response.PlayerCode,
                 Amount = response.Amount,

@@ -14,7 +14,7 @@ namespace Tgs.GameInterface.EvolutionService.Core.Models
         [XmlElement("euid")]
         public string PlayerCode { get; init; } = default!;
         [XmlElement("uid")]
-        public string Uid { get; init; } = default!;
+        public string Uid { get; init; } = string.Empty;
         [XmlElement("errormsg")]
         public string? ErrorMessage { get; init; }
     }

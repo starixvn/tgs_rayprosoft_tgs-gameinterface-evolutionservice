@@ -20,9 +20,9 @@ public class CreditResponse
     public DateTime Datetime => DateTime.ParseExact(_Datetime, "ddd MMM dd HH:mm:ss UTC yyyy", CultureInfo.InvariantCulture);
 
     [XmlElement("euid")]
-    public string EuId { get; init; } = default!;
+    public string EuId { get; init; } = string.Empty;
     [XmlElement("uid")]
-    public string Uid { get; init; } = default!;
+    public string Uid { get; init; } = string.Empty;
     [XmlElement("errormsg")]
     public string? ErrorMessage { get; init; }
 }
