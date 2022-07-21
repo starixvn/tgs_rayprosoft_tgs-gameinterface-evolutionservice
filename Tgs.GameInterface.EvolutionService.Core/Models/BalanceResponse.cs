@@ -12,7 +12,7 @@ namespace Tgs.GameInterface.EvolutionService.Core.Models
         [XmlElement("abalance")]
         public decimal ABalance { get; init; }
         [XmlElement("euid")]
-        public string PlayerCode { get; init; } = default!;
+        public string PlayerCode { get; init; } = string.Empty;
         [XmlElement("uid")]
         public string Uid { get; init; } = string.Empty;
         [XmlElement("errormsg")]
