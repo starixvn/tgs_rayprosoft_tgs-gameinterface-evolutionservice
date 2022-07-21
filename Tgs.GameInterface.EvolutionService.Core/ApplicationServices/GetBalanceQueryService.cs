@@ -24,8 +24,9 @@ namespace Tgs.GameInterface.EvolutionService.Core.ApplicationServices
                  result.Result == "Y",
                  result.PlayerCode,
                  result.Uid,
-                 ABalance: result.ABalance,
                  TBalance: result.TBalance,
+                 ABalance: result.ABalance,
+                 result.Result == "Y" && !string.IsNullOrEmpty(result.PlayerCode),
                  ErrorMessage: result.ErrorMessage);
         }
     }

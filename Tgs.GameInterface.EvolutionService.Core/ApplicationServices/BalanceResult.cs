@@ -6,4 +6,5 @@ public record BalanceResult(
     string Uid,
     decimal TBalance,
     decimal ABalance,
+    bool IsPlayerExist,
     string? ErrorMessage);

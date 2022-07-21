@@ -22,9 +22,9 @@ public class TransactionInfoResponse
     [XmlElement("datetime-iso")]
     public DateTimeOffset DatetimeISO { get; init; }
     [XmlElement("euID")]
-    public string EuId { get; init; } = default!;
+    public string EuId { get; init; } = string.Empty;
     [XmlElement("uID")]
-    public string Uid { get; init; } = default!;
+    public string Uid { get; init; } = string.Empty;
     [XmlElement("cCode")]
     public string CCode { get; init; } = default!;
     [XmlElement("amount")]

@@ -24,8 +24,8 @@ internal class DebitQueryService : IGetService<DebitQuery, DebitResult>
 
         return new(
             result.Result == "Y",
-            result.ETransId,
             result.TransId,
+            result.ETransId,
             result.EuId,
             result.Uid,
             result.Balance,
