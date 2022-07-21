@@ -139,6 +139,7 @@ namespace Tgs.GameInterface.EvolutionService.Controllers
                 result.Uid,
                 result.TBalance,
                 result.ABalance,
+                result.IsPlayerExist,
                 result.ErrorMessage);
         }
 
