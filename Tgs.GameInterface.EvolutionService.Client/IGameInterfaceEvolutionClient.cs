@@ -74,12 +74,6 @@ public interface IGameInterfaceEvolutionClient
         string authorization,
         DateTimeOffset? startDate,
         DateTimeOffset? endDate,
-        string? gameType,
-        string? channel,
-        string? gameProvider,
-        string? transactionId,
-        string? owTransactionId,
-        bool? rounding,
         CancellationToken cancellationToken = default);
 
 }
