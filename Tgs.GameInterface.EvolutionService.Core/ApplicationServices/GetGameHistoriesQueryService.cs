@@ -20,12 +20,12 @@ internal class GetGameHistoriesQueryService : IGetService<GetGameHistoriesQuery,
             query.Authorization,
             query.StartDate,
             query.EndDate,
-            query.GameType,
-            query.Channel,
-            query.GameProvider,
-            query.TransactionId,
-            query.OwTransactionId,
-            query.Rounding,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
             cancellationToken).ConfigureAwait(false);
 
         var jsonResult = JsonSerializer.Deserialize<GamHistoryRoundResponse>(result);

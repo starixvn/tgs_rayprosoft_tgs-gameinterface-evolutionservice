@@ -236,13 +236,7 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
                 apiUrl,
                 request.Authorization,
                 request.StartDate.ToDateTimeOffset(),
-                request.EndDate.ToDateTimeOffset(),
-                request.GameType,
-                request.Channel,
-                request.GameProvider,
-                request.TransactionId,
-                request.OwTransactionId,
-                request.Rounding));
+                request.EndDate.ToDateTimeOffset()));
 
             return new GetGameHistoriesReply
             {

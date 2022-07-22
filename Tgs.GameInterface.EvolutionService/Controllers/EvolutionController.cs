@@ -214,13 +214,7 @@ namespace Tgs.GameInterface.EvolutionService.Controllers
                 request.ApiUrl,
                 request.Authorization,
                 request.StartDate,
-                request.EndDate,
-                request.GameType,
-                request.Channel,
-                request.GameProvider,
-                request.TransactionId,
-                request.OwTransactionId,
-                request.Rounding
+                request.EndDate
             )).ConfigureAwait(false);
 
             return new GameHistoriesResponse
