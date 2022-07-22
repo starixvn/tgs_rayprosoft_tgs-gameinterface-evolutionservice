@@ -156,9 +156,10 @@ message KickPlayerReply {
 
 message GetGameHistoriesRequest {
 	string api_url = 1;
-	string authorization = 2;
-	google.protobuf.Timestamp start_date = 3; 
-	google.protobuf.Timestamp end_date = 4; 
+	string casino_id = 2;
+	string game_history_api_token = 3;
+	google.protobuf.Timestamp start_date = 4; 
+	google.protobuf.Timestamp end_date = 5; 
 }
 
 message GetGameHistoriesReply {

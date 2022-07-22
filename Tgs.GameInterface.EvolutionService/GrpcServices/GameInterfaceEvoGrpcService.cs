@@ -232,7 +232,8 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
 
             var response = await _getGameHistoryService.GetAsync(new GetGameHistoriesQuery(
                 apiUrl,
-                request.Authorization,
+                request.CasinoId,
+                request.GameHistoryApiToken,
                 request.StartDate.ToDateTimeOffset(),
                 request.EndDate.ToDateTimeOffset()));
 
