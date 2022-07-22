@@ -12,7 +12,6 @@ public interface IGameInterfaceEvolutionClient
         string encryptedToken,
         string externalCultureCode,
         string externalCurrencyCode,
-        string externalGameId,
         CancellationToken cancellationToken = default);
 
     ValueTask<GameUrlReply> GetSlotGameUrlAsync(

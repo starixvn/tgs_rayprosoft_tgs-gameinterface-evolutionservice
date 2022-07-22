@@ -7,5 +7,4 @@ public record GetLiveDealerGameUrlQuery(
     string IpAddress,
     string EncryptedToken,
     string ExternalCultureCode,
-    string ExternalCurrencyCode,
-    string ExternalGameId);
+    string ExternalCurrencyCode);

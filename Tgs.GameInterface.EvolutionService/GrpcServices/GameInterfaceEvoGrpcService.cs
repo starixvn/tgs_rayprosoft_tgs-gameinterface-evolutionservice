@@ -54,8 +54,7 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
                 request.IpAddress,
                 request.EncryptedToken,
                 request.ExternalCultureCode,
-                request.ExternalCurrencyCode,
-                request.ExternalGameId));
+                request.ExternalCurrencyCode));
 
             return new GameUrlReply
             {

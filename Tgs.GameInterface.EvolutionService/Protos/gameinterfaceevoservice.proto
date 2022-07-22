@@ -28,7 +28,6 @@ message GetLiveDealerGameUrlRequest {
 	string encrypted_token = 5;
 	string external_culture_code = 6;
 	string external_currency_code = 7;
-	string external_game_id = 8;
 }
 
 message GetSlotGameUrlRequest {

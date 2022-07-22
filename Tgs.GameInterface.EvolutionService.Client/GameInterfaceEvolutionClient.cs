@@ -1,7 +1,4 @@
-﻿using System.Text;
-using System.Text.Json;
-using Google.Protobuf.WellKnownTypes;
-using Microsoft.Extensions.Options;
+﻿using Google.Protobuf.WellKnownTypes;
 using Tgs.GameInterface.EvolutionService.Protos;
 
 namespace Tgs.GameInterface.EvolutionService.Client
@@ -23,7 +20,6 @@ namespace Tgs.GameInterface.EvolutionService.Client
             string encryptedToken,
             string externalCultureCode,
             string externalCurrencyCode,
-            string externalGameId, 
             CancellationToken cancellationToken = default)
         {
             return await _client.GetLiveDealerGameUrlAsync(new GetLiveDealerGameUrlRequest
@@ -35,7 +31,6 @@ namespace Tgs.GameInterface.EvolutionService.Client
                 EncryptedToken = encryptedToken,
                 ExternalCultureCode = externalCultureCode,
                 ExternalCurrencyCode= externalCurrencyCode,
-                ExternalGameId= externalGameId
             },cancellationToken: cancellationToken);
         }
         public async ValueTask<GameUrlReply> GetSlotGameUrlAsync(
