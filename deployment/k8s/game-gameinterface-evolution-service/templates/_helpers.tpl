@@ -51,6 +51,7 @@ app: {{ include "game-gameinterface-evolution-service.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 tgs.kind: game
 tgs.game.kind: gameinterface
+tgs.gameprovider.kind: evotf
 {{- end }}
 
 {{/*
