@@ -155,8 +155,7 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
                 Result = response.Result,
                 PlayerCode = response.PlayerCode,
                 Uid = response.Uid,
-                ABalance = response.ABalance,
-                TBalance = response.TBalance,
+                Balance = response.ABalance,
                 IsPlayerExist = response.IsPlayerExist,
                 ErrorMessage = response.ErrorMessage ?? string.Empty
             };
