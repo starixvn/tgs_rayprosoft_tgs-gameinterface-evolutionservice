@@ -83,7 +83,7 @@ namespace Tgs.GameInterface.EvolutionService.Controllers
         [HttpPost("liveDealerGameUrl")]
         public async ValueTask<GameUrlResponse> GetLiveDealerGameUrlAsync(
             [FromServices] IGetService<GetLiveDealerGameUrlQuery, GameUrlResult> service,
-            GetGameUrlRequest request)
+            GetLiveDealerLobbyGameUrlRequest request)
         {
             var result = await service.GetAsync(new GetLiveDealerGameUrlQuery(
                 request.Ua2AuthenticationUrl,
@@ -92,8 +92,7 @@ namespace Tgs.GameInterface.EvolutionService.Controllers
                 request.IpAddress,
                 request.EncryptedToken,
                 request.ExternalCultureCode,
-                request.ExternalCurrencyCode,
-                request.ExternalGameId)).ConfigureAwait(false);
+                request.ExternalCurrencyCode)).ConfigureAwait(false);
 
             return new GameUrlResponse(
                 result.Entry,
@@ -104,7 +103,7 @@ namespace Tgs.GameInterface.EvolutionService.Controllers
         [HttpPost("slotGameUrl")]
         public async ValueTask<GameUrlResponse> GetSlotGameUrlAsync(
             [FromServices] IGetService<GetSlotGameUrlQuery, GameUrlResult> service,
-            GetGameUrlRequest request)
+            GetSlotGameUrlRequest request)
         {
             var result = await service.GetAsync(new GetSlotGameUrlQuery(
                 request.Ua2AuthenticationUrl,

@@ -3,5 +3,5 @@
 public record GetGameHistoriesQuery(
     Uri ApiUrl,
     string Authorization,
-    DateTimeOffset? StartDate, 
-    DateTimeOffset? EndDate);
+    DateTimeOffset StartDate, 
+    DateTimeOffset EndDate);

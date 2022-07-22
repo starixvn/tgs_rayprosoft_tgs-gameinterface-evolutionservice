@@ -2,7 +2,7 @@
 
 namespace Tgs.GameInterface.EvolutionService.Models;
 
-public record GetGameUrlRequest(
+public record GetSlotGameUrlRequest(
     Uri Ua2AuthenticationUrl,
     string PlayerCode,
     PlatformType PlatformType,

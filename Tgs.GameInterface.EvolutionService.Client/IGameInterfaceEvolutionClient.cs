@@ -12,7 +12,6 @@ public interface IGameInterfaceEvolutionClient
         string encryptedToken,
         string externalCultureCode,
         string externalCurrencyCode,
-        string externalGameId,
         CancellationToken cancellationToken = default);
 
     ValueTask<GameUrlReply> GetSlotGameUrlAsync(
@@ -72,14 +71,8 @@ public interface IGameInterfaceEvolutionClient
     ValueTask<GetGameHistoriesReply> GetGameHistoriesAsync(
         Uri apiUrl,
         string authorization,
-        DateTimeOffset? startDate,
-        DateTimeOffset? endDate,
-        string? gameType,
-        string? channel,
-        string? gameProvider,
-        string? transactionId,
-        string? owTransactionId,
-        bool? rounding,
+        DateTimeOffset startDate,
+        DateTimeOffset endDate,
         CancellationToken cancellationToken = default);
 
 }

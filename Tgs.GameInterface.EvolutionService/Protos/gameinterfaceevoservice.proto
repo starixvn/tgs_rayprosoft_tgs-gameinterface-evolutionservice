@@ -28,7 +28,6 @@ message GetLiveDealerGameUrlRequest {
 	string encrypted_token = 5;
 	string external_culture_code = 6;
 	string external_currency_code = 7;
-	string external_game_id = 8;
 }
 
 message GetSlotGameUrlRequest {
@@ -100,10 +99,9 @@ message GetBalanceReply {
 	bool result = 1;
 	string player_code = 2;
 	string uid = 3;
-	phoenix.protobuf.DecimalValue t_balance = 4;
-	phoenix.protobuf.DecimalValue a_balance = 5;
-	bool is_player_exist = 6;
-	string error_message = 7;
+	phoenix.protobuf.DecimalValue balance = 4;
+	bool is_player_exist = 5;
+	string error_message = 6;
 }
 
 message GetPlayerInfoRequest {

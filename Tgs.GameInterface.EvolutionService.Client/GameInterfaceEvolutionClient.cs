@@ -1,7 +1,4 @@
-﻿using System.Text;
-using System.Text.Json;
-using Google.Protobuf.WellKnownTypes;
-using Microsoft.Extensions.Options;
+﻿using Google.Protobuf.WellKnownTypes;
 using Tgs.GameInterface.EvolutionService.Protos;
 
 namespace Tgs.GameInterface.EvolutionService.Client
@@ -23,7 +20,6 @@ namespace Tgs.GameInterface.EvolutionService.Client
             string encryptedToken,
             string externalCultureCode,
             string externalCurrencyCode,
-            string externalGameId, 
             CancellationToken cancellationToken = default)
         {
             return await _client.GetLiveDealerGameUrlAsync(new GetLiveDealerGameUrlRequest
@@ -35,7 +31,6 @@ namespace Tgs.GameInterface.EvolutionService.Client
                 EncryptedToken = encryptedToken,
                 ExternalCultureCode = externalCultureCode,
                 ExternalCurrencyCode= externalCurrencyCode,
-                ExternalGameId= externalGameId
             },cancellationToken: cancellationToken);
         }
         public async ValueTask<GameUrlReply> GetSlotGameUrlAsync(
@@ -121,15 +116,14 @@ namespace Tgs.GameInterface.EvolutionService.Client
                 PlayerCode = playerCode,
             }, cancellationToken: cancellationToken);
 
-        public async ValueTask<GetGameHistoriesReply> GetGameHistoriesAsync(Uri apiUrl, string authorization, DateTimeOffset? startDate, DateTimeOffset? endDate,
-            string? gameType, string? channel, string? gameProvider, string? transactionId, string? owTransactionId,
-            bool? rounding, CancellationToken cancellationToken = default)
+        public async ValueTask<GetGameHistoriesReply> GetGameHistoriesAsync(Uri apiUrl, string authorization,
+            DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
             => await _client.GetGameHistoriesAsync(new GetGameHistoriesRequest
             {
                 ApiUrl = apiUrl.ToString(),
                 Authorization = authorization,
-                StartDate = startDate?.ToTimestamp(),
-                EndDate = endDate?.ToTimestamp()
+                StartDate = startDate.ToTimestamp(),
+                EndDate = endDate.ToTimestamp()
             }, cancellationToken: cancellationToken);
     }
 }
