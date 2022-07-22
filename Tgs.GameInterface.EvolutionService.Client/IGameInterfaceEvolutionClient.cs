@@ -71,8 +71,8 @@ public interface IGameInterfaceEvolutionClient
     ValueTask<GetGameHistoriesReply> GetGameHistoriesAsync(
         Uri apiUrl,
         string authorization,
-        DateTimeOffset? startDate,
-        DateTimeOffset? endDate,
+        DateTimeOffset startDate,
+        DateTimeOffset endDate,
         CancellationToken cancellationToken = default);
 
 }

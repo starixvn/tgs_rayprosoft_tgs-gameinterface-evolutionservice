@@ -116,14 +116,14 @@ namespace Tgs.GameInterface.EvolutionService.Client
                 PlayerCode = playerCode,
             }, cancellationToken: cancellationToken);
 
-        public async ValueTask<GetGameHistoriesReply> GetGameHistoriesAsync(Uri apiUrl, string authorization, 
-            DateTimeOffset? startDate, DateTimeOffset? endDate, CancellationToken cancellationToken = default)
+        public async ValueTask<GetGameHistoriesReply> GetGameHistoriesAsync(Uri apiUrl, string authorization,
+            DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default)
             => await _client.GetGameHistoriesAsync(new GetGameHistoriesRequest
             {
                 ApiUrl = apiUrl.ToString(),
                 Authorization = authorization,
-                StartDate = startDate?.ToTimestamp(),
-                EndDate = endDate?.ToTimestamp()
+                StartDate = startDate.ToTimestamp(),
+                EndDate = endDate.ToTimestamp()
             }, cancellationToken: cancellationToken);
     }
 }
