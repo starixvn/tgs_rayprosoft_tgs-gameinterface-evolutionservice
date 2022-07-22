@@ -129,13 +129,7 @@ namespace Tgs.GameInterface.EvolutionService.Client
                 ApiUrl = apiUrl.ToString(),
                 Authorization = authorization,
                 StartDate = startDate?.ToTimestamp(),
-                EndDate = endDate?.ToTimestamp(),
-                GameType = gameType,
-                Channel = channel,
-                GameProvider = gameProvider,
-                TransactionId = transactionId,
-                OwTransactionId = owTransactionId,
-                Rounding = rounding ?? true
+                EndDate = endDate?.ToTimestamp()
             }, cancellationToken: cancellationToken);
     }
 }
