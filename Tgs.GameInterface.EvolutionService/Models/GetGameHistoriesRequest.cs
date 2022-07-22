@@ -4,6 +4,7 @@ namespace Tgs.GameInterface.EvolutionService.Models;
 
 public record GetGameHistoriesRequest(
     Uri ApiUrl,
-    string Authorization,
+    string casinoId,
+    string gameHistoryApiToken,
     DateTimeOffset StartDate,
     DateTimeOffset EndDate);

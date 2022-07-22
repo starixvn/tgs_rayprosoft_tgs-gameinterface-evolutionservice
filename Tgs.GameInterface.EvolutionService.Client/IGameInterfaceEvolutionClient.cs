@@ -70,7 +70,8 @@ public interface IGameInterfaceEvolutionClient
 
     ValueTask<GetGameHistoriesReply> GetGameHistoriesAsync(
         Uri apiUrl,
-        string authorization,
+        string casinoId,
+        string gameHistoryApiToken,
         DateTimeOffset startDate,
         DateTimeOffset endDate,
         CancellationToken cancellationToken = default);

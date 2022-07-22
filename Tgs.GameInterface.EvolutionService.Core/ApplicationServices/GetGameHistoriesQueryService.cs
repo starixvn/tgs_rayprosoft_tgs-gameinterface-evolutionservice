@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Text;
+using System.Text.Json;
 using Tgs.GameInterface.EvolutionService.Core.ApplicationServices.GamHistory;
 using Tgs.ServiceUtility;
 
@@ -15,9 +16,11 @@ internal class GetGameHistoriesQueryService : IGetService<GetGameHistoriesQuery,
 
     public async ValueTask<GameHistoriesResult> GetAsync(GetGameHistoriesQuery query, CancellationToken cancellationToken = default)
     {
+        var authorization = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{query.casinoId}:{query.gameHistoryApiToken}"));
+
         var result = await _client.GetGameHistoryAsync(
             query.ApiUrl,
-            query.Authorization,
+            authorization,
             query.StartDate,
             query.EndDate,
             null,

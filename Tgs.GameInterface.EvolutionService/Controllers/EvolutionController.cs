@@ -211,7 +211,8 @@ namespace Tgs.GameInterface.EvolutionService.Controllers
         {
             var result = await service.GetAsync(new GetGameHistoriesQuery(
                 request.ApiUrl,
-                request.Authorization,
+                request.casinoId,
+                request.gameHistoryApiToken,
                 request.StartDate,
                 request.EndDate
             )).ConfigureAwait(false);
