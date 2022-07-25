@@ -99,7 +99,7 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
         {
             var apiUrl = new Uri(request.ApiUrl);
 
-            var response = await _creditService.GetAsync(new CreditQuery(
+            var response = await _debitService.GetAsync(new DebitQuery(
                 apiUrl,
                 request.AgentId,
                 request.PlayerCode,
@@ -122,7 +122,7 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
         {
             var apiUrl = new Uri(request.ApiUrl);
 
-            var response = await _debitService.GetAsync(new DebitQuery(
+            var response = await _creditService.GetAsync(new CreditQuery(
                 apiUrl,
                 request.AgentId,
                 request.PlayerCode,
@@ -139,6 +139,7 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
                 Balance = response.Balance,
                 ErrorMessage = response.ErrorMessage ?? string.Empty
             };
+
         }
 
         public override async Task<GetBalanceReply> GetBalance(GetBalanceRequest request, ServerCallContext context)
