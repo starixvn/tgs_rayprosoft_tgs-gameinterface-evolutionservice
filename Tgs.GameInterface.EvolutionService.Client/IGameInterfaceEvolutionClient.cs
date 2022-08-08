@@ -6,6 +6,7 @@ public interface IGameInterfaceEvolutionClient
 {
     ValueTask<GameUrlReply> GetLiveDealerGameUrlAsync(
         Uri ua2AuthenticationUrl,
+        string brandCode,
         string playerCode,
         short platformType,
         string ipAddress,
@@ -16,6 +17,7 @@ public interface IGameInterfaceEvolutionClient
 
     ValueTask<GameUrlReply> GetSlotGameUrlAsync(
         Uri ua2AuthenticationUrl,
+        string brandCode,
         string playerCode,
         short platformType,
         string ipAddress,
