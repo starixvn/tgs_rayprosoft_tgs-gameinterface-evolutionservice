@@ -49,6 +49,10 @@ namespace Tgs.GameInterface.EvolutionService.Core.ApplicationServices
                     {
                         Wrapped = true,
                         Mobile = query.PlatformType == PlatformType.Mobile
+                    },
+                    Brand = new GameUrlConfigBrand
+                    {
+                        Skin = query.BrandCode
                     }
                 }
             };

@@ -49,6 +49,7 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
 
             var response = await _getLiveDealerGameUrlService.GetAsync(new GetLiveDealerGameUrlQuery(
                 ua2AuthenticationUrl,
+                request.BrandCode,
                 request.PlayerCode,
                 platformType,
                 request.IpAddress,
@@ -75,6 +76,7 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
 
             var response = await _getSlotGameUrlService.GetAsync(new GetSlotGameUrlQuery(
                 ua2AuthenticationUrl,
+                request.BrandCode,
                 request.PlayerCode,
                 platformType,
                 request.IpAddress,

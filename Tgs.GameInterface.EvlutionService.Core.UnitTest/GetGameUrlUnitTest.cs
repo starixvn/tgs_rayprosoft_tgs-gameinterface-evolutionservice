@@ -52,6 +52,10 @@ namespace Tgs.GameInterface.EvolutionService.Core.UnitTest
                     {
                         Wrapped = true,
                         Mobile = false
+                    },
+                    Brand = new GameUrlConfigBrand
+                    {
+                        Skin = "brandCode"
                     }
                 }
             };
