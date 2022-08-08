@@ -22,23 +22,25 @@ service GameInterfaceEvoService {
 
 message GetLiveDealerGameUrlRequest {
 	string ua2_authentication_url = 1;
-	string player_code = 2;
-	int32 platform_type= 3;
-	string ip_address= 4;
-	string encrypted_token = 5;
-	string external_culture_code = 6;
-	string external_currency_code = 7;
+	string brand_code = 2;
+	string player_code = 3;
+	int32 platform_type= 4;
+	string ip_address= 5;
+	string encrypted_token = 6;
+	string external_culture_code = 7;
+	string external_currency_code = 8;
 }
 
 message GetSlotGameUrlRequest {
 	string ua2_authentication_url = 1;
-	string player_code = 2;
-	int32 platform_type= 3;
-	string ip_address= 4;
-	string encrypted_token = 5;
-	string external_culture_code = 6;
-	string external_currency_code = 7;
-	string external_game_id = 8;
+	string brand_code = 2;
+	string player_code = 3;
+	int32 platform_type= 4;
+	string ip_address= 5;
+	string encrypted_token = 6;
+	string external_culture_code = 7;
+	string external_currency_code = 8;
+	string external_game_id = 9;
 }
 
 message GameUrlReply {

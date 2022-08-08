@@ -2,6 +2,7 @@
 
 public record GetSlotGameUrlQuery(
     Uri Ua2AuthenticationUrl,
+    string BrandCode,
     string PlayerCode,
     PlatformType PlatformType,
     string IpAddress,
