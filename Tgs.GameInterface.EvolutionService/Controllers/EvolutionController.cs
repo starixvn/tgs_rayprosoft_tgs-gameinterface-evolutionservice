@@ -87,6 +87,7 @@ namespace Tgs.GameInterface.EvolutionService.Controllers
         {
             var result = await service.GetAsync(new GetLiveDealerGameUrlQuery(
                 request.Ua2AuthenticationUrl,
+                request.BrandCode,
                 request.PlayerCode,
                 request.PlatformType,
                 request.IpAddress,
@@ -107,6 +108,7 @@ namespace Tgs.GameInterface.EvolutionService.Controllers
         {
             var result = await service.GetAsync(new GetSlotGameUrlQuery(
                 request.Ua2AuthenticationUrl,
+                request.BrandCode,
                 request.PlayerCode,
                 request.PlatformType,
                 request.IpAddress,

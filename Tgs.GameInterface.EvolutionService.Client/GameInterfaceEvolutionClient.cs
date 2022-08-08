@@ -12,6 +12,7 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
 
     public async ValueTask<GameUrlReply> GetLiveDealerGameUrlAsync(
         Uri ua2AuthenticationUrl,
+        string brandCode,
         string playerCode,
         short platformType,
         string ipAddress,
@@ -22,6 +23,7 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
         => await _client.GetLiveDealerGameUrlAsync(new()
         {
             Ua2AuthenticationUrl = ua2AuthenticationUrl.ToString(),
+            BrandCode = brandCode,
             PlayerCode = playerCode,
             PlatformType = platformType,
             IpAddress = ipAddress,
@@ -32,6 +34,7 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
 
     public async ValueTask<GameUrlReply> GetSlotGameUrlAsync(
         Uri ua2AuthenticationUrl,
+        string brandCode,
         string playerCode,
         short platformType,
         string ipAddress,
@@ -43,6 +46,7 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
         => await _client.GetSlotGameUrlAsync(new()
         {
             Ua2AuthenticationUrl = ua2AuthenticationUrl.ToString(),
+            BrandCode = brandCode,
             PlayerCode = playerCode,
             PlatformType = platformType,
             IpAddress = ipAddress,
