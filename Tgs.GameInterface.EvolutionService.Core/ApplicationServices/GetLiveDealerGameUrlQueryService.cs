@@ -49,7 +49,7 @@ namespace Tgs.GameInterface.EvolutionService.Core.ApplicationServices
                     },
                     Brand = new GameUrlConfigBrand
                     {
-                        Skin = query.BrandCode
+                        Id = query.BrandCode
                     }
                 }
             };
