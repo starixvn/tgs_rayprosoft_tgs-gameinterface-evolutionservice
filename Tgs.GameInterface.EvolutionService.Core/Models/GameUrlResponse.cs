@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Tgs.GameInterface.EvolutionService.Core.Models
+﻿namespace Tgs.GameInterface.EvolutionService.Core.Models
 {
     public record GameUrlResponse
     {

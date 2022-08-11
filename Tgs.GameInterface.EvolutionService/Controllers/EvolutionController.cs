@@ -10,7 +10,7 @@ namespace Tgs.GameInterface.EvolutionService.Controllers
     public class EvolutionController : ControllerBase
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="service"></param>
         /// <param name="request"></param>
@@ -64,8 +64,59 @@ namespace Tgs.GameInterface.EvolutionService.Controllers
                 result.ErrorMessage);
         }
 
+        [HttpPost("balance")]
+        public async ValueTask<BalanceResponse> GetBalanceAsync(
+                    [FromServices] IGetService<GetBalanceQuery, BalanceResult> service,
+                    GetBalanceRequest request)
+        {
+            var result = await service.GetAsync(new GetBalanceQuery(
+                request.ApiUrl,
+                request.AgentId,
+                request.PlayerCode
+            )).ConfigureAwait(false);
+
+            return new BalanceResponse(
+                result.Result,
+                result.PlayerCode,
+                result.Uid,
+                result.TBalance,
+                result.ABalance,
+                result.IsPlayerExist,
+                result.ErrorMessage);
+        }
+
+        [HttpPost("gameHistories")]
+        public async ValueTask<GameHistoriesResponse> GetGameHistoriesAsync(
+                    [FromServices] IGetService<GetGameHistoriesQuery, GameHistoriesResult> service,
+                    GetGameHistoriesRequest request)
+        {
+            var result = await service.GetAsync(new GetGameHistoriesQuery(
+                request.ApiUrl,
+                request.casinoId,
+                request.gameHistoryApiToken,
+                request.StartDate,
+                request.EndDate
+            )).ConfigureAwait(false);
+
+            return new GameHistoriesResponse
+            {
+                GameHistoryRecords = result.GameHistoryRecords.Select(x => new GameHistoryRecordResponse
+                {
+                    PlayerCode = x.PlayerCode,
+                    ExternalRoundId = x.ExternalRoundId,
+                    ExternalGameId = x.ExternalGameId,
+                    ExternalCreatedOn = x.ExternalCreatedOn,
+                    ExternalClosedOn = x.ExternalClosedOn,
+                    BetAmount = x.BetAmount,
+                    ValidBetAmount = x.ValidBetAmount,
+                    SettleAmount = x.SettleAmount,
+                    AdditionalData = x.AdditionalData
+                })
+            };
+        }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="service"></param>
         /// <param name="request"></param>
@@ -101,49 +152,6 @@ namespace Tgs.GameInterface.EvolutionService.Controllers
                 result.ErrorMessages);
         }
 
-        [HttpPost("slotGameUrl")]
-        public async ValueTask<GameUrlResponse> GetSlotGameUrlAsync(
-            [FromServices] IGetService<GetSlotGameUrlQuery, GameUrlResult> service,
-            GetSlotGameUrlRequest request)
-        {
-            var result = await service.GetAsync(new GetSlotGameUrlQuery(
-                request.Ua2AuthenticationUrl,
-                request.BrandCode,
-                request.PlayerCode,
-                request.PlatformType,
-                request.IpAddress,
-                request.EncryptedToken,
-                request.ExternalCultureCode,
-                request.ExternalCurrencyCode,
-                request.ExternalGameId)).ConfigureAwait(false);
-
-            return new GameUrlResponse(
-                result.Entry,
-                result.EntryEmbedded,
-                result.ErrorMessages);
-        }
-
-        [HttpPost("balance")]
-        public async ValueTask<BalanceResponse> GetBalanceAsync(
-            [FromServices] IGetService<GetBalanceQuery, BalanceResult> service,
-            GetBalanceRequest request)
-        {
-            var result = await service.GetAsync(new GetBalanceQuery(
-                request.ApiUrl,
-                request.AgentId,
-                request.PlayerCode
-            )).ConfigureAwait(false);
-
-            return new BalanceResponse(
-                result.Result,
-                result.PlayerCode,
-                result.Uid,
-                result.TBalance,
-                result.ABalance,
-                result.IsPlayerExist,
-                result.ErrorMessage);
-        }
-
         [HttpPost("playerInfo")]
         public async ValueTask<PlayerInfoResponse> GetPlayerInfoAsync(
             [FromServices] IGetService<GetPlayerInfoQuery, PlayerInfoResult> service,
@@ -164,6 +172,28 @@ namespace Tgs.GameInterface.EvolutionService.Controllers
                 result.PlayerCode,
                 result.Uid,
                 result.ErrorMessage);
+        }
+
+        [HttpPost("slotGameUrl")]
+        public async ValueTask<GameUrlResponse> GetSlotGameUrlAsync(
+            [FromServices] IGetService<GetSlotGameUrlQuery, GameUrlResult> service,
+            GetSlotGameUrlRequest request)
+        {
+            var result = await service.GetAsync(new GetSlotGameUrlQuery(
+                request.Ua2AuthenticationUrl,
+                request.BrandCode,
+                request.PlayerCode,
+                request.PlatformType,
+                request.IpAddress,
+                request.EncryptedToken,
+                request.ExternalCultureCode,
+                request.ExternalCurrencyCode,
+                request.ExternalGameId)).ConfigureAwait(false);
+
+            return new GameUrlResponse(
+                result.Entry,
+                result.EntryEmbedded,
+                result.ErrorMessages);
         }
 
         [HttpPost("transactionInfo")]
@@ -205,36 +235,5 @@ namespace Tgs.GameInterface.EvolutionService.Controllers
                 request.PlayerCode
             )).ConfigureAwait(false);
         }
-
-        [HttpPost("gameHistories")]
-        public async ValueTask<GameHistoriesResponse> GetGameHistoriesAsync(
-            [FromServices] IGetService<GetGameHistoriesQuery, GameHistoriesResult> service,
-            GetGameHistoriesRequest request)
-        {
-            var result = await service.GetAsync(new GetGameHistoriesQuery(
-                request.ApiUrl,
-                request.casinoId,
-                request.gameHistoryApiToken,
-                request.StartDate,
-                request.EndDate
-            )).ConfigureAwait(false);
-
-            return new GameHistoriesResponse
-            {
-                GameHistoryRecords = result.GameHistoryRecords.Select(x => new GameHistoryRecordResponse
-                {
-                    PlayerCode = x.PlayerCode,
-                    ExternalRoundId = x.ExternalRoundId,
-                    ExternalGameId = x.ExternalGameId,
-                    ExternalCreatedOn = x.ExternalCreatedOn,
-                    ExternalClosedOn = x.ExternalClosedOn,
-                    BetAmount = x.BetAmount,
-                    ValidBetAmount = x.ValidBetAmount,
-                    SettleAmount = x.SettleAmount,
-                    AdditionalData = x.AdditionalData
-                })
-            };
-        }
-
     }
 }

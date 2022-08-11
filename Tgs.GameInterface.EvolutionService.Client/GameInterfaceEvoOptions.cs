@@ -2,5 +2,5 @@
 
 public class GameInterfaceEvoOptions
 {
-	public Uri Url { get; set; } = default!;
+    public Uri Url { get; set; } = default!;
 }

@@ -10,15 +10,15 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
 {
     public class GameInterfaceEvoGrpcService : GameInterfaceEvoService.GameInterfaceEvoServiceBase
     {
-        private readonly IGetService<GetLiveDealerGameUrlQuery, GameUrlResult> _getLiveDealerGameUrlService;
-        private readonly IGetService<GetSlotGameUrlQuery, GameUrlResult> _getSlotGameUrlService;
         private readonly IGetService<CreditQuery, CreditResult> _creditService;
         private readonly IGetService<DebitQuery, DebitResult> _debitService;
         private readonly IGetService<GetBalanceQuery, BalanceResult> _getBalanceService;
+        private readonly IGetService<GetGameHistoriesQuery, GameHistoriesResult> _getGameHistoryService;
+        private readonly IGetService<GetLiveDealerGameUrlQuery, GameUrlResult> _getLiveDealerGameUrlService;
         private readonly IGetService<GetPlayerInfoQuery, PlayerInfoResult> _getPlayerInfoService;
+        private readonly IGetService<GetSlotGameUrlQuery, GameUrlResult> _getSlotGameUrlService;
         private readonly IGetService<GetTransactionInfoQuery, TransactionInfoResult> _getTransactionInfoService;
         private readonly IGetService<KickPlayerQuery, bool> _kickPlayerService;
-        private readonly IGetService<GetGameHistoriesQuery, GameHistoriesResult> _getGameHistoryService;
 
         public GameInterfaceEvoGrpcService(
             IGetService<GetLiveDealerGameUrlQuery, GameUrlResult> getLiveDealerGameUrlService,
@@ -40,61 +40,6 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
             _getTransactionInfoService = getTransactionInfoService ?? throw new ArgumentNullException(nameof(getTransactionInfoService));
             _kickPlayerService = kickPlayerService ?? throw new ArgumentNullException(nameof(kickPlayerService));
             _getGameHistoryService = getGameHistoryService ?? throw new ArgumentNullException(nameof(getGameHistoryService));
-        }
-
-        public override async Task<GameUrlReply> GetLiveDealerGameUrl(GetLiveDealerGameUrlRequest request, ServerCallContext context)
-        {
-            var ua2AuthenticationUrl = new Uri(request.Ua2AuthenticationUrl);
-            var platformType = (PlatformType)request.PlatformType;
-
-            var response = await _getLiveDealerGameUrlService.GetAsync(new GetLiveDealerGameUrlQuery(
-                ua2AuthenticationUrl,
-                request.BrandCode,
-                request.PlayerCode,
-                platformType,
-                request.IpAddress,
-                request.EncryptedToken,
-                request.ExternalCultureCode,
-                request.ExternalCurrencyCode));
-
-            return new GameUrlReply
-            {
-                Entry = response.Entry ?? string.Empty,
-                EntryEmbedded = response.EntryEmbedded ?? string.Empty,
-                Errors = { response.ErrorMessages?.Select(x => new Error
-                {
-                    Code = x.Code,
-                    Message = x.Message
-                }) ?? new RepeatedField<Error>() }
-            };
-        }
-
-        public override async Task<GameUrlReply> GetSlotGameUrl(GetSlotGameUrlRequest request, ServerCallContext context)
-        {
-            var ua2AuthenticationUrl = new Uri(request.Ua2AuthenticationUrl);
-            var platformType = (PlatformType)request.PlatformType;
-
-            var response = await _getSlotGameUrlService.GetAsync(new GetSlotGameUrlQuery(
-                ua2AuthenticationUrl,
-                request.BrandCode,
-                request.PlayerCode,
-                platformType,
-                request.IpAddress,
-                request.EncryptedToken,
-                request.ExternalCultureCode,
-                request.ExternalCurrencyCode,
-                request.ExternalGameId));
-
-            return new GameUrlReply
-            {
-                Entry = response.Entry ?? string.Empty,
-                EntryEmbedded = response.EntryEmbedded ?? string.Empty,
-                Errors = { response.ErrorMessages?.Select(x => new Error
-                {
-                    Code = x.Code,
-                    Message = x.Message
-                }) ?? new RepeatedField<Error>() }
-            };
         }
 
         public override async Task<FundInReply> FundIn(FundInRequest request, ServerCallContext context)
@@ -141,7 +86,6 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
                 Balance = response.Balance,
                 ErrorMessage = response.ErrorMessage ?? string.Empty
             };
-
         }
 
         public override async Task<GetBalanceReply> GetBalance(GetBalanceRequest request, ServerCallContext context)
@@ -164,6 +108,61 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
             };
         }
 
+        public override async Task<GetGameHistoriesReply> GetGameHistories(GetGameHistoriesRequest request, ServerCallContext context)
+        {
+            var apiUrl = new Uri(request.ApiUrl);
+
+            var response = await _getGameHistoryService.GetAsync(new GetGameHistoriesQuery(
+                apiUrl,
+                request.CasinoId,
+                request.GameHistoryApiToken,
+                request.StartDate.ToDateTimeOffset(),
+                request.EndDate.ToDateTimeOffset()));
+
+            return new GetGameHistoriesReply
+            {
+                Records = {response.GameHistoryRecords.Select(x => new Protos.GameHistoryRecord
+                {
+                    PlayerCode = x.PlayerCode,
+                    ExternalRoundId = x.ExternalRoundId,
+                    ExternalGameId = x.ExternalGameId,
+                    ExternalCreatedOn = x.ExternalCreatedOn.ToTimestamp(),
+                    ExternalClosedOn = x.ExternalClosedOn.ToTimestamp(),
+                    BetAmount = x.BetAmount,
+                    ValidBetAmount = x.ValidBetAmount,
+                    SettleAmount = x.SettleAmount,
+                    AdditionalData = x.AdditionalData
+                })}
+            };
+        }
+
+        public override async Task<GameUrlReply> GetLiveDealerGameUrl(GetLiveDealerGameUrlRequest request, ServerCallContext context)
+        {
+            var ua2AuthenticationUrl = new Uri(request.Ua2AuthenticationUrl);
+            var platformType = (PlatformType)request.PlatformType;
+
+            var response = await _getLiveDealerGameUrlService.GetAsync(new GetLiveDealerGameUrlQuery(
+                ua2AuthenticationUrl,
+                request.BrandCode,
+                request.PlayerCode,
+                platformType,
+                request.IpAddress,
+                request.EncryptedToken,
+                request.ExternalCultureCode,
+                request.ExternalCurrencyCode));
+
+            return new GameUrlReply
+            {
+                Entry = response.Entry ?? string.Empty,
+                EntryEmbedded = response.EntryEmbedded ?? string.Empty,
+                Errors = { response.ErrorMessages?.Select(x => new Error
+                {
+                    Code = x.Code,
+                    Message = x.Message
+                }) ?? new RepeatedField<Error>() }
+            };
+        }
+
         public override async Task<GetPlayerInfoReply> GetPlayerInfo(GetPlayerInfoRequest request, ServerCallContext context)
         {
             var apiUrl = new Uri(request.ApiUrl);
@@ -183,6 +182,34 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
                 ScreenName = response.ScreenName,
                 CountryCode = response.CountryCode,
                 ErrorMessage = response.ErrorMessage ?? string.Empty
+            };
+        }
+
+        public override async Task<GameUrlReply> GetSlotGameUrl(GetSlotGameUrlRequest request, ServerCallContext context)
+        {
+            var ua2AuthenticationUrl = new Uri(request.Ua2AuthenticationUrl);
+            var platformType = (PlatformType)request.PlatformType;
+
+            var response = await _getSlotGameUrlService.GetAsync(new GetSlotGameUrlQuery(
+                ua2AuthenticationUrl,
+                request.BrandCode,
+                request.PlayerCode,
+                platformType,
+                request.IpAddress,
+                request.EncryptedToken,
+                request.ExternalCultureCode,
+                request.ExternalCurrencyCode,
+                request.ExternalGameId));
+
+            return new GameUrlReply
+            {
+                Entry = response.Entry ?? string.Empty,
+                EntryEmbedded = response.EntryEmbedded ?? string.Empty,
+                Errors = { response.ErrorMessages?.Select(x => new Error
+                {
+                    Code = x.Code,
+                    Message = x.Message
+                }) ?? new RepeatedField<Error>() }
             };
         }
 
@@ -228,34 +255,5 @@ namespace Tgs.GameInterface.EvolutionService.GrpcServices
                 Result = response
             };
         }
-
-        public override async Task<GetGameHistoriesReply> GetGameHistories(GetGameHistoriesRequest request, ServerCallContext context)
-        {
-            var apiUrl = new Uri(request.ApiUrl);
-
-            var response = await _getGameHistoryService.GetAsync(new GetGameHistoriesQuery(
-                apiUrl,
-                request.CasinoId,
-                request.GameHistoryApiToken,
-                request.StartDate.ToDateTimeOffset(),
-                request.EndDate.ToDateTimeOffset()));
-
-            return new GetGameHistoriesReply
-            {
-                Records = {response.GameHistoryRecords.Select(x => new Protos.GameHistoryRecord
-                {
-                    PlayerCode = x.PlayerCode,
-                    ExternalRoundId = x.ExternalRoundId,
-                    ExternalGameId = x.ExternalGameId,
-                    ExternalCreatedOn = x.ExternalCreatedOn.ToTimestamp(),
-                    ExternalClosedOn = x.ExternalClosedOn.ToTimestamp(),
-                    BetAmount = x.BetAmount,
-                    ValidBetAmount = x.ValidBetAmount,
-                    SettleAmount = x.SettleAmount,
-                    AdditionalData = x.AdditionalData
-                })}
-            };
-        }
-
     }
 }

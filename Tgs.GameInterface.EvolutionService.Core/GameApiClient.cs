@@ -36,53 +36,6 @@ public class GameApiClient : IGameApiClient
         _tgsLog = tgsLog ?? throw new ArgumentNullException(nameof(tgsLog));
     }
 
-    public async ValueTask<GameUrlResponse> GetGameUrlAsync(Uri apiUrl, GameUrlRequest request,
-        CancellationToken cancellationToken)
-    {
-        var sw = Stopwatch.StartNew();
-
-        var content = new StringContent(JsonSerializer.Serialize(request, SerializerOptions), Encoding.UTF8,
-            "application/json");
-
-        var response = await _client.PostAsync(apiUrl, content, cancellationToken);
-
-        sw.Stop();
-
-        await LogAsync("getAuthentication", content, response, sw.ElapsedMilliseconds, cancellationToken);
-
-        _ = response.EnsureSuccessStatusCode();
-
-        return JsonSerializer.Deserialize<GameUrlResponse>(
-            await response.Content.ReadAsStringAsync(cancellationToken),
-            new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            })!;
-    }
-
-    public async ValueTask<BalanceResponse> GetBalanceAsync(Uri apiUrl, string cCode, string ecId, string euId,
-        CancellationToken cancellationToken)
-    {
-        var sw = Stopwatch.StartNew();
-
-        var response =
-            await _client.GetAsync($"{apiUrl}api/ecashier?cCode={cCode}&ecID={ecId}&euID={euId}&output=1",
-                cancellationToken);
-
-        sw.Stop();
-
-        await LogAsync("getBalance", null, response, sw.ElapsedMilliseconds, cancellationToken);
-
-        _ = response.EnsureSuccessStatusCode();
-
-        var serializer = new XmlSerializer(typeof(BalanceResponse));
-
-        var memStream =
-            new MemoryStream(Encoding.UTF8.GetBytes(await response.Content.ReadAsStringAsync(cancellationToken)));
-
-        return (BalanceResponse)serializer.Deserialize(memStream)!;
-    }
-
     public async ValueTask<CreditResponse> CreditAsync(Uri apiUrl, string cCode, string ecId, string euId,
         decimal amount, string eTransId, string createUser, CancellationToken cancellationToken)
     {
@@ -128,6 +81,117 @@ public class GameApiClient : IGameApiClient
             new MemoryStream(Encoding.UTF8.GetBytes(await response.Content.ReadAsStringAsync(cancellationToken)));
 
         return (DebitResponse)serializer.Deserialize(memStream)!;
+    }
+
+    public async ValueTask<BalanceResponse> GetBalanceAsync(Uri apiUrl, string cCode, string ecId, string euId,
+        CancellationToken cancellationToken)
+    {
+        var sw = Stopwatch.StartNew();
+
+        var response =
+            await _client.GetAsync($"{apiUrl}api/ecashier?cCode={cCode}&ecID={ecId}&euID={euId}&output=1",
+                cancellationToken);
+
+        sw.Stop();
+
+        await LogAsync("getBalance", null, response, sw.ElapsedMilliseconds, cancellationToken);
+
+        _ = response.EnsureSuccessStatusCode();
+
+        var serializer = new XmlSerializer(typeof(BalanceResponse));
+
+        var memStream =
+            new MemoryStream(Encoding.UTF8.GetBytes(await response.Content.ReadAsStringAsync(cancellationToken)));
+
+        return (BalanceResponse)serializer.Deserialize(memStream)!;
+    }
+
+    public async ValueTask<string> GetGameHistoryAsync(Uri apiUrl, string authorization, DateTimeOffset? startDate, DateTimeOffset? endDate,
+        string? gameType,
+        string? channel, string? gameProvider, string? transactionId, string? owTransactionId, bool? rounding,
+        CancellationToken cancellationToken)
+    {
+        var sw = Stopwatch.StartNew();
+
+        var path = $"{apiUrl}api/gamehistory/v1/casino/games?";
+
+        if (startDate is not null)
+        {
+            path += $"&startDate={startDate.Value.ToUniversalTime():yyyy-MM-ddThh:mm:ss.fffZ}";
+        }
+
+        if (endDate is not null)
+        {
+            path += $"&endDate={endDate.Value.ToUniversalTime():yyyy-MM-ddThh:mm:ss.fffZ}";
+        }
+
+        if (!string.IsNullOrEmpty(gameType))
+        {
+            path += $"&gameType={gameType}";
+        }
+
+        if (!string.IsNullOrEmpty(channel))
+        {
+            path += $"&channel={channel}";
+        }
+
+        if (!string.IsNullOrEmpty(gameProvider))
+        {
+            path += $"&gameProvider={gameProvider}";
+        }
+
+        if (!string.IsNullOrEmpty(transactionId))
+        {
+            path += $"&transactionId={transactionId}";
+        }
+
+        if (!string.IsNullOrEmpty(owTransactionId))
+        {
+            path += $"&owTransactionId={owTransactionId}";
+        }
+
+        if (rounding is not null)
+        {
+            path += $"&rounding={rounding}";
+        }
+
+        var httpRequest = new HttpRequestMessage(HttpMethod.Get, path);
+
+        httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Basic", authorization);
+
+        var response = await _client.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
+
+        sw.Stop();
+
+        await LogAsync("getGameHistory", null, response, sw.ElapsedMilliseconds, cancellationToken);
+
+        _ = response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadAsStringAsync(cancellationToken);
+    }
+
+    public async ValueTask<GameUrlResponse> GetGameUrlAsync(Uri apiUrl, GameUrlRequest request,
+                        CancellationToken cancellationToken)
+    {
+        var sw = Stopwatch.StartNew();
+
+        var content = new StringContent(JsonSerializer.Serialize(request, SerializerOptions), Encoding.UTF8,
+            "application/json");
+
+        var response = await _client.PostAsync(apiUrl, content, cancellationToken);
+
+        sw.Stop();
+
+        await LogAsync("getAuthentication", content, response, sw.ElapsedMilliseconds, cancellationToken);
+
+        _ = response.EnsureSuccessStatusCode();
+
+        return JsonSerializer.Deserialize<GameUrlResponse>(
+            await response.Content.ReadAsStringAsync(cancellationToken),
+            new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            })!;
     }
 
     public async ValueTask<PlayerInfoResponse> GetPlayerInfoAsync(Uri apiUrl, string cCode, string ecId, string euId,
@@ -200,70 +264,6 @@ public class GameApiClient : IGameApiClient
         _ = response.EnsureSuccessStatusCode();
 
         return response.IsSuccessStatusCode;
-    }
-
-    public async ValueTask<string> GetGameHistoryAsync(Uri apiUrl, string authorization, DateTimeOffset? startDate, DateTimeOffset? endDate,
-        string? gameType,
-        string? channel, string? gameProvider, string? transactionId, string? owTransactionId, bool? rounding,
-        CancellationToken cancellationToken)
-    {
-        var sw = Stopwatch.StartNew();
-
-        var path = $"{apiUrl}api/gamehistory/v1/casino/games?";
-
-        if (startDate is not null)
-        {
-            path += $"&startDate={startDate.Value.ToUniversalTime():yyyy-MM-ddThh:mm:ss.fffZ}";
-        }
-
-        if (endDate is not null)
-        {
-            path += $"&endDate={endDate.Value.ToUniversalTime():yyyy-MM-ddThh:mm:ss.fffZ}";
-        }
-
-        if (!string.IsNullOrEmpty(gameType))
-        {
-            path += $"&gameType={gameType}";
-        }
-
-        if (!string.IsNullOrEmpty(channel))
-        {
-            path += $"&channel={channel}";
-        }
-
-        if (!string.IsNullOrEmpty(gameProvider))
-        {
-            path += $"&gameProvider={gameProvider}";
-        }
-
-        if (!string.IsNullOrEmpty(transactionId))
-        {
-            path += $"&transactionId={transactionId}";
-        }
-
-        if (!string.IsNullOrEmpty(owTransactionId))
-        {
-            path += $"&owTransactionId={owTransactionId}";
-        }
-
-        if (rounding is not null)
-        {
-            path += $"&rounding={rounding}";
-        }
-
-        var httpRequest = new HttpRequestMessage(HttpMethod.Get, path);
-
-        httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Basic", authorization);
-
-        var response = await _client.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
-
-        sw.Stop();
-
-        await LogAsync("getGameHistory", null, response, sw.ElapsedMilliseconds, cancellationToken);
-
-        _ = response.EnsureSuccessStatusCode();
-
-        return await response.Content.ReadAsStringAsync(cancellationToken);
     }
 
     private async ValueTask LogAsync(string logPrefix, HttpContent? content, HttpResponseMessage httpResponseMessage,
