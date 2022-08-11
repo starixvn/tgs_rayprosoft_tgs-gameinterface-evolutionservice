@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Tgs.GameInterface.EvolutionService.Core;
 
 namespace Tgs.GameInterface.EvolutionService.Core.DependencyInjection
 {

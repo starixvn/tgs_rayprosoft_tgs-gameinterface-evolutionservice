@@ -14,7 +14,6 @@ builder.Configuration
     .AddJsonFile("/config/appsettings.json", true)
     .AddEnvironmentVariables();
 
-
 builder.Services.AddSingleton<DiagnosticsInterceptorOptions>();
 builder.Services.AddSingleton<LoggingInterceptor>();
 builder.Services.AddGrpc(options =>

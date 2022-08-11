@@ -10,8 +10,66 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
     public GameInterfaceEvolutionClient(GameInterfaceEvoService.GameInterfaceEvoServiceClient client)
         => _client = client;
 
+    public async ValueTask<FundInReply> FundInAsync(
+        Uri apiUrl,
+        string agentId,
+        string playerCode,
+        string transactionId,
+        decimal amount, CancellationToken cancellationToken = default)
+        => await _client.FundInAsync(new()
+        {
+            ApiUrl = apiUrl.ToString(),
+            AgentId = agentId,
+            PlayerCode = playerCode,
+            TransactionId = transactionId,
+            Amount = amount
+        }, cancellationToken: cancellationToken);
+
+    public async ValueTask<FundOutReply> FundOutAsync(
+        Uri apiUrl,
+        string agentId,
+        string playerCode,
+        string transactionId, decimal amount,
+        CancellationToken cancellationToken = default)
+        => await _client.FundOutAsync(new()
+        {
+            ApiUrl = apiUrl.ToString(),
+            AgentId = agentId,
+            PlayerCode = playerCode,
+            TransactionId = transactionId,
+            Amount = amount
+        }, cancellationToken: cancellationToken);
+
+    public async ValueTask<GetBalanceReply> GetBalanceAsync(
+        Uri apiUrl,
+        string agentId,
+        string playerCode,
+        CancellationToken cancellationToken = default)
+        => await _client.GetBalanceAsync(new()
+        {
+            ApiUrl = apiUrl.ToString(),
+            AgentId = agentId,
+            PlayerCode = playerCode
+        }, cancellationToken: cancellationToken);
+
+    public async ValueTask<GetGameHistoriesReply> GetGameHistoriesAsync(
+        Uri apiUrl,
+        string casinoId,
+        string gameHistoryApiToken,
+        DateTimeOffset startDate,
+        DateTimeOffset endDate,
+        CancellationToken cancellationToken = default)
+        => await _client.GetGameHistoriesAsync(new()
+        {
+            ApiUrl = apiUrl.ToString(),
+            CasinoId = casinoId,
+            GameHistoryApiToken = gameHistoryApiToken,
+            StartDate = startDate.ToTimestamp(),
+            EndDate = endDate.ToTimestamp()
+        }, cancellationToken: cancellationToken);
+
     public async ValueTask<GameUrlReply> GetLiveDealerGameUrlAsync(
-        Uri ua2AuthenticationUrl,
+                        Uri ua2AuthenticationUrl,
         string brandCode,
         string playerCode,
         short platformType,
@@ -32,8 +90,20 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
             ExternalCurrencyCode = externalCurrencyCode
         }, cancellationToken: cancellationToken);
 
+    public async ValueTask<GetPlayerInfoReply> GetPlayerInfoAsync(
+        Uri apiUrl,
+        string agentId,
+        string playerCode,
+        CancellationToken cancellationToken = default)
+        => await _client.GetPlayerInfoAsync(new()
+        {
+            ApiUrl = apiUrl.ToString(),
+            AgentId = agentId,
+            PlayerCode = playerCode
+        }, cancellationToken: cancellationToken);
+
     public async ValueTask<GameUrlReply> GetSlotGameUrlAsync(
-        Uri ua2AuthenticationUrl,
+            Uri ua2AuthenticationUrl,
         string brandCode,
         string playerCode,
         short platformType,
@@ -56,64 +126,10 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
             ExternalGameId = externalGameId
         }, cancellationToken: cancellationToken);
 
-    public async ValueTask<FundInReply> FundInAsync(
-        Uri apiUrl, 
-        string agentId, 
-        string playerCode, 
-        string transactionId,
-        decimal amount, CancellationToken cancellationToken = default)
-        => await _client.FundInAsync(new()
-        {
-            ApiUrl = apiUrl.ToString(),
-            AgentId = agentId,
-            PlayerCode = playerCode,
-            TransactionId = transactionId,
-            Amount = amount
-        }, cancellationToken: cancellationToken);
-
-    public async ValueTask<FundOutReply> FundOutAsync(
-        Uri apiUrl, 
-        string agentId, 
-        string playerCode,
-        string transactionId, decimal amount,
-        CancellationToken cancellationToken = default)
-        => await _client.FundOutAsync(new()
-        {
-            ApiUrl = apiUrl.ToString(),
-            AgentId = agentId,
-            PlayerCode = playerCode,
-            TransactionId = transactionId,
-            Amount = amount
-        }, cancellationToken: cancellationToken);
-
-    public async ValueTask<GetBalanceReply> GetBalanceAsync(
-        Uri apiUrl, 
-        string agentId, 
-        string playerCode,
-        CancellationToken cancellationToken = default)
-        => await _client.GetBalanceAsync(new()
-        {
-            ApiUrl = apiUrl.ToString(),
-            AgentId = agentId,
-            PlayerCode = playerCode
-        }, cancellationToken: cancellationToken);
-
-    public async ValueTask<GetPlayerInfoReply> GetPlayerInfoAsync(
-        Uri apiUrl, 
-        string agentId, 
-        string playerCode,
-        CancellationToken cancellationToken = default)
-        => await _client.GetPlayerInfoAsync(new()
-        {
-            ApiUrl = apiUrl.ToString(),
-            AgentId = agentId,
-            PlayerCode = playerCode
-        }, cancellationToken: cancellationToken);
-
     public async ValueTask<GetTransactionInfoReply> GetTransactionInfoAsync(
-        Uri apiUrl, 
+        Uri apiUrl,
         string agentId,
-        string playerCode, 
+        string playerCode,
         string transactionId,
         CancellationToken cancellationToken = default)
         => await _client.GetTransactionInfoAsync(new()
@@ -125,9 +141,9 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
         }, cancellationToken: cancellationToken);
 
     public async ValueTask<KickPlayerReply> KickPlayerAsync(
-        Uri apiUrl, 
-        string casinoId, 
-        string apiToken, 
+        Uri apiUrl,
+        string casinoId,
+        string apiToken,
         string uuid,
         string playerCode,
         CancellationToken cancellationToken = default)
@@ -138,21 +154,5 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
             ApiToken = apiToken,
             Uuid = uuid,
             PlayerCode = playerCode
-        }, cancellationToken: cancellationToken);
-
-    public async ValueTask<GetGameHistoriesReply> GetGameHistoriesAsync(
-        Uri apiUrl,
-        string casinoId,
-        string gameHistoryApiToken,
-        DateTimeOffset startDate,
-        DateTimeOffset endDate,
-        CancellationToken cancellationToken = default)
-        => await _client.GetGameHistoriesAsync(new()
-        {
-            ApiUrl = apiUrl.ToString(),
-            CasinoId = casinoId,
-            GameHistoryApiToken = gameHistoryApiToken,
-            StartDate = startDate.ToTimestamp(),
-            EndDate = endDate.ToTimestamp()
         }, cancellationToken: cancellationToken);
 }

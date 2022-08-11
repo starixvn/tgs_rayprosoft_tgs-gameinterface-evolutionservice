@@ -2,7 +2,7 @@
 
 public record KickPlayerQuery(
     Uri ApiUrl,
-    string CasinoId, 
+    string CasinoId,
     string ApiToken,
     string Uuid,
     string PlayerCode);

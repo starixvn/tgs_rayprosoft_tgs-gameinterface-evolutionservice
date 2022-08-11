@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using Tgs.GameInterface.EvolutionService.Core.Models.GameUrl;
+﻿using Tgs.GameInterface.EvolutionService.Core.Models.GameUrl;
 
 namespace Tgs.GameInterface.EvolutionService.Core.Models
 {

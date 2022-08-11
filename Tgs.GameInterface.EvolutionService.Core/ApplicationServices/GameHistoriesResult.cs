@@ -1,5 +1,4 @@
-﻿
-namespace Tgs.GameInterface.EvolutionService.Core.ApplicationServices
+﻿namespace Tgs.GameInterface.EvolutionService.Core.ApplicationServices
 {
     public record GameHistoriesResult
     {

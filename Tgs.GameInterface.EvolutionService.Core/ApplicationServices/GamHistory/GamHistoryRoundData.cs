@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Tgs.GameInterface.EvolutionService.Core.ApplicationServices.GamHistory
 {

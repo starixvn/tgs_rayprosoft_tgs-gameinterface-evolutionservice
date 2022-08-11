@@ -4,29 +4,6 @@ namespace Tgs.GameInterface.EvolutionService.Client;
 
 public interface IGameInterfaceEvolutionClient
 {
-    ValueTask<GameUrlReply> GetLiveDealerGameUrlAsync(
-        Uri ua2AuthenticationUrl,
-        string brandCode,
-        string playerCode,
-        short platformType,
-        string ipAddress,
-        string encryptedToken,
-        string externalCultureCode,
-        string externalCurrencyCode,
-        CancellationToken cancellationToken = default);
-
-    ValueTask<GameUrlReply> GetSlotGameUrlAsync(
-        Uri ua2AuthenticationUrl,
-        string brandCode,
-        string playerCode,
-        short platformType,
-        string ipAddress,
-        string encryptedToken,
-        string externalCultureCode,
-        string externalCurrencyCode,
-        string externalGameId,
-        CancellationToken cancellationToken = default);
-
     ValueTask<FundInReply> FundInAsync(
         Uri apiUrl,
         string agentId,
@@ -49,10 +26,41 @@ public interface IGameInterfaceEvolutionClient
         string playerCode,
         CancellationToken cancellationToken = default);
 
+    ValueTask<GetGameHistoriesReply> GetGameHistoriesAsync(
+        Uri apiUrl,
+        string casinoId,
+        string gameHistoryApiToken,
+        DateTimeOffset startDate,
+        DateTimeOffset endDate,
+        CancellationToken cancellationToken = default);
+
+    ValueTask<GameUrlReply> GetLiveDealerGameUrlAsync(
+                        Uri ua2AuthenticationUrl,
+        string brandCode,
+        string playerCode,
+        short platformType,
+        string ipAddress,
+        string encryptedToken,
+        string externalCultureCode,
+        string externalCurrencyCode,
+        CancellationToken cancellationToken = default);
+
     ValueTask<GetPlayerInfoReply> GetPlayerInfoAsync(
         Uri apiUrl,
         string agentId,
         string playerCode,
+        CancellationToken cancellationToken = default);
+
+    ValueTask<GameUrlReply> GetSlotGameUrlAsync(
+            Uri ua2AuthenticationUrl,
+        string brandCode,
+        string playerCode,
+        short platformType,
+        string ipAddress,
+        string encryptedToken,
+        string externalCultureCode,
+        string externalCurrencyCode,
+        string externalGameId,
         CancellationToken cancellationToken = default);
 
     ValueTask<GetTransactionInfoReply> GetTransactionInfoAsync(
@@ -69,13 +77,4 @@ public interface IGameInterfaceEvolutionClient
         string uuid,
         string playerCode,
         CancellationToken cancellationToken = default);
-
-    ValueTask<GetGameHistoriesReply> GetGameHistoriesAsync(
-        Uri apiUrl,
-        string casinoId,
-        string gameHistoryApiToken,
-        DateTimeOffset startDate,
-        DateTimeOffset endDate,
-        CancellationToken cancellationToken = default);
-
 }

@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using System.Text;
 using Microsoft.Extensions.Logging.Abstractions;

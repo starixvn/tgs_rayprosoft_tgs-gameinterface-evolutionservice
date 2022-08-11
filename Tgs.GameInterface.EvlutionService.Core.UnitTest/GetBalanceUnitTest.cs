@@ -1,13 +1,9 @@
 using System.Net;
 using System.Text;
-using System.Xml.Linq;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using RichardSzalay.MockHttp;
-using Tgs.GameInterface.EvolutionService.Core.ApplicationServices;
-using Tgs.GameInterface.EvolutionService.Core.Models;
-using Tgs.GameInterface.EvolutionService.Core.Models.GameUrl;
 using Tgs.Logging;
 
 namespace Tgs.GameInterface.EvolutionService.Core.UnitTest
@@ -46,9 +42,9 @@ namespace Tgs.GameInterface.EvolutionService.Core.UnitTest
             var fakeTgsLog = Substitute.For<ITgsLog>();
             var client = new GameApiClient(fakeHttpClient, fakeLog, fakeTgsLog);
 
-            var result = await client.GetBalanceAsync(apiUrl, cCode, ecId, playerCode,default);
+            var result = await client.GetBalanceAsync(apiUrl, cCode, ecId, playerCode, default);
 
-            Assert.AreEqual("Y",result.Result);
+            Assert.AreEqual("Y", result.Result);
             Assert.AreEqual("extUser123", result.PlayerCode);
             Assert.AreEqual(25.1354M, result.ABalance);
         }

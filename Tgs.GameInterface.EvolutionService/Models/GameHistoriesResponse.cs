@@ -1,5 +1,4 @@
-﻿
-namespace Tgs.GameInterface.EvolutionService.Models
+﻿namespace Tgs.GameInterface.EvolutionService.Models
 {
     public record GameHistoriesResponse
     {

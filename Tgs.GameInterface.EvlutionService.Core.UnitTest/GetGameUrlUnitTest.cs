@@ -1,12 +1,10 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
-using System.Xml.Linq;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using RichardSzalay.MockHttp;
-using Tgs.GameInterface.EvolutionService.Core.ApplicationServices;
 using Tgs.GameInterface.EvolutionService.Core.Models;
 using Tgs.GameInterface.EvolutionService.Core.Models.GameUrl;
 using Tgs.Logging;
@@ -78,7 +76,7 @@ namespace Tgs.GameInterface.EvolutionService.Core.UnitTest
 
             var result = await client.GetGameUrlAsync(apiUrl, request, default);
 
-            Assert.AreEqual("Entry",result.Entry);
+            Assert.AreEqual("Entry", result.Entry);
             Assert.AreEqual("EntryEmbedded", result.EntryEmbedded);
         }
     }
