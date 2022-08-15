@@ -45,7 +45,11 @@ internal class GetGameHistoriesQueryService : IGetService<GetGameHistoriesQuery,
                 BetAmount = p.Bets.Sum(b => b.Stake),
                 ValidBetAmount = p.Bets.Sum(b => b.Stake),
                 SettleAmount = p.Bets.Sum(b => b.Payout),
-                AdditionalData = JsonSerializer.Serialize(g.Result)
+                AdditionalData = JsonSerializer.Serialize(new
+                {
+                    Participants = g.Participants,
+                    result = g.Result
+                })
             }))) ?? Array.Empty<GameHistoryRecord>()
         };
     }
