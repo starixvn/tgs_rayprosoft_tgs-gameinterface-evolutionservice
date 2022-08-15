@@ -19,6 +19,8 @@ builder.Services.AddSingleton<LoggingInterceptor>();
 builder.Services.AddGrpc(options =>
 {
     options.Interceptors.Add<LoggingInterceptor>();
+    options.EnableDetailedErrors = true;
+    options.MaxReceiveMessageSize = null;
 });
 builder.Services.AddGrpcReflection();
 
@@ -40,7 +42,7 @@ builder.Logging
 builder.Services
     .AddSingleton<IConfigureOptions<OtlpExporterOptions>>(
         sp => new ConfigureNamedOptions<OtlpExporterOptions>(
-            Microsoft.Extensions.Options.Options.DefaultName,
+            Options.DefaultName,
             exporterOptions =>
             {
                 var config = sp.GetRequiredService<IConfiguration>();
