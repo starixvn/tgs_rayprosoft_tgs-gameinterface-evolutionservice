@@ -28,6 +28,7 @@ namespace Microsoft.Extensions.DependencyInjection
                         EnableMultipleHttp2Connections = true
                     };
                     configureChannel.HttpHandler = handler;
+                    configureChannel.MaxReceiveMessageSize = null;
                 })
                 .AddInterceptor<LoggingInterceptor>()
                 .Services
