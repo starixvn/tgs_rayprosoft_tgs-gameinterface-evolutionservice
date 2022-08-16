@@ -117,12 +117,12 @@ public class GameApiClient : IGameApiClient
 
         if (startDate is not null)
         {
-            path += $"&startDate={startDate.Value.ToUniversalTime():yyyy-MM-ddThh:mm:ss.fffZ}";
+            path += $"&startDate={startDate.Value.ToUniversalTime():yyyy-MM-ddTHH:mm:ss.fffZ}";
         }
 
         if (endDate is not null)
         {
-            path += $"&endDate={endDate.Value.ToUniversalTime():yyyy-MM-ddThh:mm:ss.fffZ}";
+            path += $"&endDate={endDate.Value.ToUniversalTime():yyyy-MM-ddTHH:mm:ss.fffZ}";
         }
 
         if (!string.IsNullOrEmpty(gameType))
