@@ -16,8 +16,8 @@
 
   <ItemGroup>
     <PackageReference Include="Tgs.Logging" Version="0.0.19" />
-    <PackageReference Include="TGS.ServiceUtility" Version="0.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+    <PackageReference Include="TGS.ServiceUtility" Version="0.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
   </ItemGroup>
 
 </Project>

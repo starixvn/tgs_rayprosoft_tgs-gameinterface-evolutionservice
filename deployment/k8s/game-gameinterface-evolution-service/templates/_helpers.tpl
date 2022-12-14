@@ -47,8 +47,8 @@ Selector labels
 */}}
 {{- define "game-gameinterface-evolution-service.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "game-gameinterface-evolution-service.name" . }}
+app.kubernetes.io/instance: RELEASE.NAME
 app: {{ include "game-gameinterface-evolution-service.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
 tgs.kind: game
 tgs.game.kind: gameinterface
 tgs.gameprovider.kind: evotf
