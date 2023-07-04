@@ -4,6 +4,10 @@ namespace Tgs.GameInterface.EvolutionService.Client;
 
 public interface IGameInterfaceEvolutionClient
 {
+    ValueTask<string> CheckingServiceAsync(
+        string machineName,
+        CancellationToken cancellationToken = default);
+
     ValueTask<FundInReply> FundInAsync(
         Uri apiUrl,
         string agentId,

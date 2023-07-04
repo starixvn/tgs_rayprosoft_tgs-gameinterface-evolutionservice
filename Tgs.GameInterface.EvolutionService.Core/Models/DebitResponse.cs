@@ -7,7 +7,7 @@ namespace Tgs.GameInterface.EvolutionService.Core.Models;
 public class DebitResponse
 {
     [XmlElement("datetime")]
-    public string _Datetime { get; init; }
+    public string _Datetime { get; init; } = default!;
 
     [XmlElement("balance")]
     public decimal Balance { get; init; }

@@ -2,65 +2,64 @@
 using Tgs.GameInterface.EvolutionService.Core.Models.GameUrl;
 using Tgs.ServiceUtility;
 
-namespace Tgs.GameInterface.EvolutionService.Core.ApplicationServices
+namespace Tgs.GameInterface.EvolutionService.Core.ApplicationServices;
+
+internal class GetLiveDealerGameUrlQueryService : IGetService<GetLiveDealerGameUrlQuery, GameUrlResult>
 {
-    internal class GetLiveDealerGameUrlQueryService : IGetService<GetLiveDealerGameUrlQuery, GameUrlResult>
+    private readonly IGameApiClient _client;
+
+    public GetLiveDealerGameUrlQueryService(IGameApiClient client)
     {
-        private readonly IGameApiClient _client;
+        _client = client ?? throw new ArgumentNullException(nameof(client));
+    }
 
-        public GetLiveDealerGameUrlQueryService(IGameApiClient client)
+    public async ValueTask<GameUrlResult> GetAsync(GetLiveDealerGameUrlQuery query, CancellationToken cancellationToken = default)
+    {
+        var data = new GameUrlRequest
         {
-            _client = client ?? throw new ArgumentNullException(nameof(client));
-        }
-
-        public async ValueTask<GameUrlResult> GetAsync(GetLiveDealerGameUrlQuery query, CancellationToken cancellationToken = default)
-        {
-            var data = new GameUrlRequest
+            Uuid = Guid.NewGuid().ToString(),
+            Player = new GameUrlPlayer
             {
-                Uuid = Guid.NewGuid().ToString(),
-                Player = new GameUrlPlayer
+                Id = query.PlayerCode,
+                Update = false,
+                FirstName = string.Empty,
+                LastName = string.Empty,
+                Nickname = query.PlayerCode,
+                Country = "CN",
+                Language = query.ExternalCultureCode,
+                Currency = query.ExternalCurrencyCode,
+                Session = new GameUrlPlayerSession
                 {
-                    Id = query.PlayerCode,
-                    Update = false,
-                    FirstName = string.Empty,
-                    LastName = string.Empty,
-                    Nickname = query.PlayerCode,
-                    Country = "CN",
-                    Language = query.ExternalCultureCode,
-                    Currency = query.ExternalCurrencyCode,
-                    Session = new GameUrlPlayerSession
-                    {
-                        Id = query.EncryptedToken,
-                        Ip = query.IpAddress
-                    },
-                    Group = default(GameUrlPlayerGroup)
+                    Id = query.EncryptedToken,
+                    Ip = query.IpAddress
                 },
-                Config = new GameUrlConfig
+                Group = default
+            },
+            Config = new GameUrlConfig
+            {
+                Game = new GameUrlConfigGame
                 {
-                    Game = new GameUrlConfigGame
-                    {
-                        Category = "baccarat_sicbo",
-                        Table = null
-                    },
-                    Channel = new GameUrlConfigChannel
-                    {
-                        Wrapped = true,
-                        Mobile = query.PlatformType == PlatformType.Mobile
-                    },
-                    Brand = new GameUrlConfigBrand
-                    {
-                        Id = query.BrandCode,
-                        Skin = query.BrandCode
-                    }
+                    Category = "baccarat_sicbo",
+                    Table = null
+                },
+                Channel = new GameUrlConfigChannel
+                {
+                    Wrapped = true,
+                    Mobile = query.PlatformType == PlatformType.Mobile
+                },
+                Brand = new GameUrlConfigBrand
+                {
+                    Id = query.BrandCode,
+                    Skin = query.BrandCode
                 }
-            };
+            }
+        };
 
-            var result = await _client.GetGameUrlAsync(query.Ua2AuthenticationUrl, data, cancellationToken).ConfigureAwait(false);
+        var result = await _client.GetGameUrlAsync(query.Ua2AuthenticationUrl, data, cancellationToken).ConfigureAwait(false);
 
-            return new GameUrlResult(
-                result.Entry,
-                result.EntryEmbedded,
-                result.Errors);
-        }
+        return new GameUrlResult(
+            result.Entry,
+            result.EntryEmbedded,
+            result.Errors);
     }
 }

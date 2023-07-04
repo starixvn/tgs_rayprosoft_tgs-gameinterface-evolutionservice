@@ -1,7 +1,6 @@
-﻿namespace Tgs.GameInterface.EvolutionService.Models
+﻿namespace Tgs.GameInterface.EvolutionService.Models;
+
+public record GameHistoriesResponse
 {
-    public record GameHistoriesResponse
-    {
-        public IEnumerable<GameHistoryRecordResponse> GameHistoryRecords { get; init; } = default!;
-    }
+    public IEnumerable<GameHistoryRecordResponse> GameHistoryRecords { get; init; } = default!;
 }

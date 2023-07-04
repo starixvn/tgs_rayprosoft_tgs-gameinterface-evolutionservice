@@ -1,10 +1,8 @@
-using System.Net;
+﻿using System.Net;
 using System.Text;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NSubstitute;
 using RichardSzalay.MockHttp;
-using Tgs.Logging;
 
 namespace Tgs.GameInterface.EvolutionService.Core.UnitTest;
 
@@ -40,8 +38,7 @@ public class PlayerInfoUnitTest
 
         var fakeHttpClient = handler.ToHttpClient();
         var fakeLog = NullLogger<GameApiClient>.Instance;
-        var fakeTgsLog = Substitute.For<ITgsLog>();
-        var client = new GameApiClient(fakeHttpClient, fakeLog, fakeTgsLog);
+        var client = new GameApiClient(fakeHttpClient, fakeLog);
 
         var result = await client.GetPlayerInfoAsync(apiUrl, cCode, ecId, playerCode, default);
 

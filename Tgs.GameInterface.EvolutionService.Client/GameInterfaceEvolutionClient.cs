@@ -10,6 +10,22 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
     public GameInterfaceEvolutionClient(GameInterfaceEvoService.GameInterfaceEvoServiceClient client)
         => _client = client;
 
+    public async ValueTask<string> CheckingServiceAsync(string machineName, CancellationToken cancellationToken = default)
+    {
+        var request = new CheckingServiceRequest
+        {
+            MachineName = machineName,
+        };
+
+        var reply = await _client
+            .CheckingServiceAsync(
+                request: request,
+                cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        return reply.MachineName;
+    }
+
     public async ValueTask<FundInReply> FundInAsync(
         Uri apiUrl,
         string agentId,

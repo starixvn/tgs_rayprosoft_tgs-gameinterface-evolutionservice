@@ -1,7 +1,6 @@
-﻿namespace Tgs.GameInterface.EvolutionService.Core.ApplicationServices
+﻿namespace Tgs.GameInterface.EvolutionService.Core.ApplicationServices;
+
+public record GameHistoriesResult
 {
-    public record GameHistoriesResult
-    {
-        public IEnumerable<GameHistoryRecord> GameHistoryRecords { get; init; } = default!;
-    }
+    public IEnumerable<GameHistoryRecord> GameHistoryRecords { get; init; } = default!;
 }

@@ -6,13 +6,12 @@ using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 using Microsoft.Extensions.Logging;
 using Tgs.GameInterface.EvolutionService.Core.Models;
-using Tgs.Logging;
 
 namespace Tgs.GameInterface.EvolutionService.Core;
 
 public class GameApiClient : IGameApiClient
 {
-    private static readonly JsonSerializerOptions? SerializerOptions = new()
+    private static readonly JsonSerializerOptions? _SerializerOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         Converters =
@@ -23,17 +22,14 @@ public class GameApiClient : IGameApiClient
 
     private readonly HttpClient _client;
     private readonly ILogger<GameApiClient> _logger;
-    private readonly ITgsLog _tgsLog;
 
     public GameApiClient(
         HttpClient client,
-        ILogger<GameApiClient> logger,
-        ITgsLog tgsLog
+        ILogger<GameApiClient> logger
     )
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _tgsLog = tgsLog ?? throw new ArgumentNullException(nameof(tgsLog));
     }
 
     public async ValueTask<CreditResponse> CreditAsync(Uri apiUrl, string cCode, string ecId, string euId,
@@ -175,7 +171,7 @@ public class GameApiClient : IGameApiClient
     {
         var sw = Stopwatch.StartNew();
 
-        var content = new StringContent(JsonSerializer.Serialize(request, SerializerOptions), Encoding.UTF8,
+        var content = new StringContent(JsonSerializer.Serialize(request, _SerializerOptions), Encoding.UTF8,
             "application/json");
 
         var response = await _client.PostAsync(apiUrl, content, cancellationToken);
@@ -255,7 +251,7 @@ public class GameApiClient : IGameApiClient
 
         var response =
             await _client.PostAsync($"{apiUrl}api/external/kickPlayer/v1/{casinoId}/{apiToken}",
-                new StringContent(JsonSerializer.Serialize(content, SerializerOptions), Encoding.UTF8, "application/json"), cancellationToken);
+                new StringContent(JsonSerializer.Serialize(content, _SerializerOptions), Encoding.UTF8, "application/json"), cancellationToken);
 
         sw.Stop();
 
@@ -273,12 +269,15 @@ public class GameApiClient : IGameApiClient
 
         var responseMessage = default(string);
 
-        using (var sr = new StreamReader(httpResponseMessage.Content.ReadAsStreamAsync(cancellationToken).Result))
+        using (var stream = new StreamReader(httpResponseMessage.Content.ReadAsStreamAsync(cancellationToken).Result))
         {
-            responseMessage = await sr.ReadToEndAsync().ConfigureAwait(false);
+            responseMessage = await stream
+                .ReadToEndAsync(
+                cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
         }
 
-        var apiLogEvent = new ApiLogEvent
+        var apiLogEvent = new GameApiLogEvent
         {
             Path = httpResponseMessage.RequestMessage?.RequestUri?.AbsoluteUri.NoLongerThan(512) ?? string.Empty,
             Method = httpResponseMessage.RequestMessage?.Method.ToString().NoLongerThan(8) ?? string.Empty,
@@ -288,7 +287,7 @@ public class GameApiClient : IGameApiClient
                 httpResponseMessage.RequestMessage?.Content?.Headers?.ToString(),
             RequestContent =
                 content == null
-                    ? ""
+                    ? string.Empty
                     : (await content!.ReadAsStringAsync(cancellationToken).ConfigureAwait(false)).NoLongerThan(4096),
             ResponseHeaders = httpResponseMessage.Headers.ToString(),
             ResponseContent = responseMessage.NoLongerThan(4096),
@@ -296,7 +295,7 @@ public class GameApiClient : IGameApiClient
             ExecutionTimeMs = (int)time,
             RecordedOn = DateTimeOffset.UtcNow
         };
-        _tgsLog.LogApi(apiLogEvent);
+
         _logger.LogInformation("{apiLogEvent}", JsonSerializer.Serialize(apiLogEvent));
     }
 }

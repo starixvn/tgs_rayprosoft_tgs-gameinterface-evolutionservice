@@ -8,22 +8,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-	  <PackageReference Include="Google.Protobuf" Version="3.21.11" />
-	  <PackageReference Include="Grpc.Net.ClientFactory" Version="2.50.0" />
-	  <PackageReference Include="Grpc.Tools" Version="2.51.0">
+	  <PackageReference Include="Google.Protobuf" Version="3.23.3" />
+	  <PackageReference Include="Grpc.Net.ClientFactory" Version="2.54.0" />
+	  <PackageReference Include="Grpc.Tools" Version="2.56.0">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
 	  <PackageReference Include="PhoenixToolkits.Protobuf.ExtendTypes" Version="0.0.6" />
   </ItemGroup>
 
-
   <ItemGroup>
-    <Protobuf Include="..\Tgs.GameInterface.EvolutionService\Protos\gameinterfaceevoservice.proto" GrpcServices="Client">
-      <Link>Protos\gameinterfaceevoservice.proto</Link>
+    <Protobuf Include="..\Tgs.GameInterface.EvolutionService\Protos\gameinterfaceevoservice.proto">
+      <Link>gameinterfaceevoservice.proto</Link>
     </Protobuf>
   </ItemGroup>
 

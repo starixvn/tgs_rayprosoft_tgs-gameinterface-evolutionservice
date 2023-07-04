@@ -1,12 +1,10 @@
-using System.Net;
+﻿using System.Net;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NSubstitute;
 using RichardSzalay.MockHttp;
 using Tgs.GameInterface.EvolutionService.Core.ApplicationServices.GamHistory;
-using Tgs.Logging;
 
 namespace Tgs.GameInterface.EvolutionService.Core.UnitTest;
 
@@ -23,7 +21,7 @@ public class GameHistoryUnitTest
         var gameType = "slot";
         var channel = "desktop";
         var gameProvider = "evolution";
-        var playerCode = "4ucmqplxb029";
+        //var playerCode = "4ucmqplxb029";
         var transactionsId = "transactionsId";
         var owTransactionId = "owTransactionId";
         var rounding = true;
@@ -46,8 +44,7 @@ public class GameHistoryUnitTest
 
         var fakeHttpClient = handler.ToHttpClient();
         var fakeLog = NullLogger<GameApiClient>.Instance;
-        var fakeTgsLog = Substitute.For<ITgsLog>();
-        var client = new GameApiClient(fakeHttpClient, fakeLog, fakeTgsLog);
+        var client = new GameApiClient(fakeHttpClient, fakeLog);
 
         var result = await client.GetGameHistoryAsync(apiUrl, authorization, startDate, endDate, gameType, channel,
             gameProvider, transactionsId, owTransactionId, rounding, default);

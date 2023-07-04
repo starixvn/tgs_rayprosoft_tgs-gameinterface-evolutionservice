@@ -1,9 +1,8 @@
-﻿namespace Tgs.GameInterface.EvolutionService.Core.Models
+﻿namespace Tgs.GameInterface.EvolutionService.Core.Models;
+
+public record GameUrlResponse
 {
-    public record GameUrlResponse
-    {
-        public string? Entry { get; set; }
-        public string? EntryEmbedded { get; set; }
-        public Error[]? Errors { get; set; }
-    }
+    public string? Entry { get; set; }
+    public string? EntryEmbedded { get; set; }
+    public Error[]? Errors { get; set; }
 }

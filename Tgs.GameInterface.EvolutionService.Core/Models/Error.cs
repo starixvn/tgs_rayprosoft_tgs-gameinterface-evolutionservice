@@ -1,8 +1,7 @@
-﻿namespace Tgs.GameInterface.EvolutionService.Core.Models
+﻿namespace Tgs.GameInterface.EvolutionService.Core.Models;
+
+public record Error
 {
-    public record Error
-    {
-        public string Code { get; set; } = default!;
-        public string Message { get; set; } = default!;
-    }
+    public string Code { get; set; } = default!;
+    public string Message { get; set; } = default!;
 }

@@ -1,10 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Tgs.GameInterface.EvolutionService.Core.ApplicationServices.GamHistory
+namespace Tgs.GameInterface.EvolutionService.Core.ApplicationServices.GamHistory;
+
+public record GamHistoryRound
 {
-    public record GamHistoryRound
-    {
-        [JsonPropertyName("games")]
-        public IEnumerable<GamHistoryRoundData> Games { get; set; }
-    }
+    [JsonPropertyName("games")]
+    public IEnumerable<GamHistoryRoundData> Games { get; set; } = default!;
 }
