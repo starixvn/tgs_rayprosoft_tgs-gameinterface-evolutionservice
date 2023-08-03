@@ -226,48 +226,32 @@ public class GameApiClient : IGameApiClient
         var responseMessage = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
 
         var jsonNode = JsonNode.Parse(responseMessage)!;
-        var data = jsonNode["data"]!.AsArray();
-        if (!data.Any())
+
+        var gameHistories = jsonNode.Deserialize<GamHistoryRoundResponse>()?.Data.SelectMany(
+            data => data.Games.SelectMany(
+                game => game.Participants.Select(
+                    participant =>
+                    new GameHistoryInfo(
+                        ExternalRoundId: game.Id,
+                        ExternalGameId: game.Table.Id,
+                        PlayerCode: participant.PlayerId,
+                        IsCancel: false,
+                        IsVoid: game.Status.Equals("Cancelled", StringComparison.OrdinalIgnoreCase),
+                        ExternalCreatedOn: game.StartedAt,
+                        ExternalClosedOn: game.SettledAt,
+                        Bet: participant.Bets.Sum(b => b.Stake),
+                        Settle: participant.Bets.Sum(b => b.Payout),
+                        AdditionalData: JsonSerializer.Serialize(game.Result))
+                    ))) ?? Enumerable.Empty<GameHistoryInfo>();
+
+        if (!gameHistories.Any())
         {
             yield break;
         }
-        var games = data.ElementAt(0)!["games"]!.AsArray();
 
-        if (games is null)
+        foreach (var gameHistory in gameHistories)
         {
-            yield break;
-        }
-
-        foreach (var game in games)
-        {
-            if (game is null)
-            {
-                continue;
-            }
-            var gameHistoryRound = game.Deserialize<GamHistoryRoundData>(_SerializerOptions)!;
-
-            var playerCode = gameHistoryRound.Participants.ElementAt(0).PlayerId;
-            var externalRoundId = gameHistoryRound.Id;
-            var externalGameId = gameHistoryRound.Table.Id;
-
-            var externalCreatedOn = gameHistoryRound.StartedAt;
-            var externalClosedOn = gameHistoryRound.SettledAt;
-            var bet = gameHistoryRound.Participants.Select(participant => participant.Bets.Sum(bet => bet.Stake)).Sum();
-            var settle = gameHistoryRound.Participants.Select(participant => participant.Bets.Sum(bet => bet.Payout)).Sum();
-            var additionalData = game.ToJsonString();
-            var isVoid = gameHistoryRound.Status.Equals("Cancelled", StringComparison.OrdinalIgnoreCase);
-            var isCancel = bet == 0 && settle == 0;
-            yield return new GameHistoryInfo(
-                ExternalRoundId: externalRoundId,
-                ExternalGameId: externalGameId,
-                PlayerCode: playerCode,
-                IsCancel: isCancel,
-                IsVoid: isVoid,
-                ExternalCreatedOn: externalCreatedOn,
-                ExternalClosedOn: externalClosedOn,
-                Bet: bet,
-                Settle: settle,
-                AdditionalData: additionalData);
+            yield return gameHistory;
         }
     }
 
