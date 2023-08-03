@@ -398,7 +398,7 @@ public class GameApiClient : IGameApiClient
                     ? string.Empty
                     : (await content!.ReadAsStringAsync(cancellationToken).ConfigureAwait(false)).NoLongerThan(4096),
             ResponseHeaders = httpResponseMessage.Headers.ToString(),
-            ResponseContent = responseMessage.NoLongerThan(int.MaxValue),
+            ResponseContent = responseMessage.NoLongerThan(4096),
             ResponseCode = (short)httpResponseMessage.StatusCode,
             ExecutionTimeMs = (int)time,
             RecordedOn = DateTimeOffset.UtcNow
