@@ -903,8 +903,6 @@ public class GameHistoryUnitTest
         Assert.Equal(30, actual.ElementAt(0).Settle);
         Assert.Equal(response["data"]!.AsArray().ElementAt(0)!["games"]!.AsArray().ElementAt(0)!["result"]!.ToJsonString(), actual.ElementAt(0).AdditionalData);
 
-
-
         Assert.Equal("1776f9341cfa969d4b939e4a", actual.ElementAt(1).ExternalRoundId);
         Assert.Equal("MegaBall00000001", actual.ElementAt(1).ExternalGameId);
         Assert.Equal("4uki9crgioxc", actual.ElementAt(1).PlayerCode);
