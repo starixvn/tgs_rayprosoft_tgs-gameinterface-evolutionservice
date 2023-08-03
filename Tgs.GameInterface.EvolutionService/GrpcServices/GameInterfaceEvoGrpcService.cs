@@ -12,6 +12,7 @@ public class GameInterfaceEvoGrpcService : GameInterfaceEvoService.GameInterface
 {
     private readonly IGetService<CreditQuery, CreditResult> _creditService;
     private readonly IGetService<DebitQuery, DebitResult> _debitService;
+    private readonly IQueryService<GameRecordQuery, GameRecordResult> _gameRecordService;
     private readonly IGetService<GetBalanceQuery, BalanceResult> _getBalanceService;
     private readonly IGetService<GetGameHistoriesQuery, GameHistoriesResult> _getGameHistoryService;
     private readonly IGetService<GetLiveDealerGameUrlQuery, GameUrlResult> _getLiveDealerGameUrlService;
@@ -31,7 +32,8 @@ public class GameInterfaceEvoGrpcService : GameInterfaceEvoService.GameInterface
         IGetService<GetPlayerInfoQuery, PlayerInfoResult> getPlayerInfoService,
         IGetService<GetTransactionInfoQuery, TransactionInfoResult> getTransactionInfoService,
         IGetService<KickPlayerQuery, bool> kickPlayerService,
-        IGetService<GetGameHistoriesQuery, GameHistoriesResult> getGameHistoryService)
+        IGetService<GetGameHistoriesQuery, GameHistoriesResult> getGameHistoryService,
+        IQueryService<GameRecordQuery, GameRecordResult> gameRecordService)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _getLiveDealerGameUrlService = getLiveDealerGameUrlService ?? throw new ArgumentNullException(nameof(getLiveDealerGameUrlService));
@@ -43,6 +45,7 @@ public class GameInterfaceEvoGrpcService : GameInterfaceEvoService.GameInterface
         _getTransactionInfoService = getTransactionInfoService ?? throw new ArgumentNullException(nameof(getTransactionInfoService));
         _kickPlayerService = kickPlayerService ?? throw new ArgumentNullException(nameof(kickPlayerService));
         _getGameHistoryService = getGameHistoryService ?? throw new ArgumentNullException(nameof(getGameHistoryService));
+        _gameRecordService = gameRecordService ?? throw new ArgumentNullException(nameof(gameRecordService));
     }
 
     public override Task<CheckingServiceReply> CheckingService(CheckingServiceRequest request, ServerCallContext context)
@@ -98,6 +101,48 @@ public class GameInterfaceEvoGrpcService : GameInterfaceEvoService.GameInterface
             Uid = response.Uid,
             Balance = response.Balance,
             ErrorMessage = response.ErrorMessage ?? string.Empty
+        };
+    }
+
+    public override async Task<GameRecordReply> GameRecord(GameRecordRequest request, ServerCallContext context)
+    {
+        var apiUrl = new Uri(request.ApiUrl);
+        var query = new GameRecordQuery(
+            ApiUrl: apiUrl,
+            CasinoId: request.CasinoId,
+            GameHistoryApiToken: request.GameHistoryApiToken,
+            StartTime: request.StartTime.ToDateTimeOffset(),
+            EndTime: request.EndTime.ToDateTimeOffset());
+
+        var gameRecords = await _gameRecordService
+            .QueryAsync(
+            query: query,
+            cancellationToken: context.CancellationToken)
+            .ToArrayAsync(
+            cancellationToken: context.CancellationToken)
+            .ConfigureAwait(false)
+            ?? Enumerable.Empty<GameRecordResult>();
+
+        return new GameRecordReply
+        {
+            Items = {gameRecords.Select(gameRecord => new GameRecordInfo
+            {
+                ExternalRoundId= gameRecord.ExternalRoundId,
+                ExternalGameId= gameRecord.ExternalGameId.ToString(),
+                PlayerCode= gameRecord.PlayerCode,
+                IsClosed= gameRecord.IsClosed,
+                IsCancelled= gameRecord.IsCancelled,
+                IsVoid=gameRecord.IsVoid,
+                ExternalCreatedOn= gameRecord.ExternalCreatedOn.ToTimestamp(),
+                ExternalClosedOn= gameRecord.ExternalClosedOn.ToTimestamp(),
+                Bet= gameRecord.Bet,
+                ValidBet= gameRecord.ValidBet,
+                Settle= gameRecord.Settle,
+                Commission= gameRecord.Commission,
+                Turnover= gameRecord.Turnover,
+                WinLoss=gameRecord.WinLoss,
+                AdditionalData= gameRecord.AdditionalData
+            })}
         };
     }
 

@@ -2,7 +2,7 @@
 
 public record GetGameHistoriesQuery(
     Uri ApiUrl,
-    string casinoId,
-    string gameHistoryApiToken,
+    string CasinoId,
+    string GameHistoryApiToken,
     DateTimeOffset StartDate,
     DateTimeOffset EndDate);

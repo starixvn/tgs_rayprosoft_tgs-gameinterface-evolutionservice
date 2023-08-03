@@ -7,6 +7,8 @@ public record GamHistoryRoundData
 {
     [JsonPropertyName("id")]
     public string Id { get; set; } = default!;
+    [JsonPropertyName("status")]
+    public string Status { get; set; } = default!;
     [JsonPropertyName("participants")]
     public GamHistoryRoundParticipant[] Participants { get; set; } = default!;
     [JsonPropertyName("settledAt")]

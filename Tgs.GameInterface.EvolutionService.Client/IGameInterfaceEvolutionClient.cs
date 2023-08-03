@@ -24,12 +24,21 @@ public interface IGameInterfaceEvolutionClient
         decimal amount,
         CancellationToken cancellationToken = default);
 
-    ValueTask<GetBalanceReply> GetBalanceAsync(
+    IAsyncEnumerable<GameRecordInfo> GameRecordAsync(
         Uri apiUrl,
+        string casinoId,
+        string gameHistoryApiToken,
+        DateTimeOffset startTime,
+        DateTimeOffset endTime,
+        CancellationToken cancellationToken = default);
+
+    ValueTask<GetBalanceReply> GetBalanceAsync(
+            Uri apiUrl,
         string agentId,
         string playerCode,
         CancellationToken cancellationToken = default);
 
+    [Obsolete("過時方法，請改使用GameRecordAsync")]
     ValueTask<GetGameHistoriesReply> GetGameHistoriesAsync(
         Uri apiUrl,
         string casinoId,
@@ -39,7 +48,7 @@ public interface IGameInterfaceEvolutionClient
         CancellationToken cancellationToken = default);
 
     ValueTask<GameUrlReply> GetLiveDealerGameUrlAsync(
-                        Uri ua2AuthenticationUrl,
+        Uri ua2AuthenticationUrl,
         string brandCode,
         string playerCode,
         short platformType,
@@ -56,7 +65,7 @@ public interface IGameInterfaceEvolutionClient
         CancellationToken cancellationToken = default);
 
     ValueTask<GameUrlReply> GetSlotGameUrlAsync(
-            Uri ua2AuthenticationUrl,
+        Uri ua2AuthenticationUrl,
         string brandCode,
         string playerCode,
         short platformType,

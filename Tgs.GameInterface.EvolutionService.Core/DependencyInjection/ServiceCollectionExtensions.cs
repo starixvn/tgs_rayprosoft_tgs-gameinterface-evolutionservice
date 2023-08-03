@@ -5,11 +5,12 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddEvoServiceCore(this IServiceCollection services)
+    public static IServiceCollection AddGameInterfaceCore(this IServiceCollection services)
         => services
         .RegisterAllServiceUtilityTypes(
             Assembly.GetExecutingAssembly(),
             ServiceLifetime.Transient)
         .AddHttpClient<IGameApiClient, GameApiClient>()
-        .Services;
+        .Services
+        .AddSingleton<IAuthorization, Authorization>();
 }

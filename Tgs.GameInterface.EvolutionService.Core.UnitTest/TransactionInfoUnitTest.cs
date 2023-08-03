@@ -1,15 +1,13 @@
 ﻿using System.Net;
 using System.Text;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RichardSzalay.MockHttp;
 
 namespace Tgs.GameInterface.EvolutionService.Core.UnitTest;
 
-[TestClass]
 public class TransactionInfoUnitTest
 {
-    [TestMethod]
+    [Fact]
     public async Task Can_Get_Transaction_Info()
     {
         var apiUrl = new Uri("http://localhost");
@@ -47,6 +45,6 @@ public class TransactionInfoUnitTest
 
         var result = await client.GetTransactionInfoAsync(apiUrl, cCode, ecId, playerCode, transactionsId, default);
 
-        Assert.AreEqual(playerCode, result.EuId);
+        Assert.Equal(playerCode, result.EuId);
     }
 }

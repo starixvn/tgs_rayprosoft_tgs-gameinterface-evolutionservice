@@ -1,15 +1,13 @@
 ﻿using System.Net;
 using System.Text;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RichardSzalay.MockHttp;
 
 namespace Tgs.GameInterface.EvolutionService.Core.UnitTest;
 
-[TestClass]
 public class CreditUnitTest
 {
-    [TestMethod]
+    [Fact]
     public async Task Can_Credit()
     {
         var apiUrl = new Uri("http://localhost");
@@ -47,7 +45,7 @@ public class CreditUnitTest
 
         var result = await client.CreditAsync(apiUrl, cCode, ecId, playerCode, 100, transactionsId, "Y", default);
 
-        Assert.AreEqual("Y", result.Result);
-        Assert.AreEqual(playerCode, result.EuId);
+        Assert.Equal("Y", result.Result);
+        Assert.Equal(playerCode, result.EuId);
     }
 }

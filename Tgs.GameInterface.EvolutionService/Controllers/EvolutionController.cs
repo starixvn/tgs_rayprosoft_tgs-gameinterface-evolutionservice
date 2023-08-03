@@ -5,7 +5,7 @@ using Tgs.ServiceUtility;
 
 namespace Tgs.GameInterface.EvolutionService.Controllers;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 public class EvolutionController : ControllerBase
 {
@@ -66,8 +66,8 @@ public class EvolutionController : ControllerBase
 
     [HttpPost("balance")]
     public async ValueTask<BalanceResponse> GetBalanceAsync(
-                [FromServices] IGetService<GetBalanceQuery, BalanceResult> service,
-                GetBalanceRequest request)
+        [FromServices] IGetService<GetBalanceQuery, BalanceResult> service,
+        GetBalanceRequest request)
     {
         var result = await service.GetAsync(new GetBalanceQuery(
             request.ApiUrl,
@@ -87,8 +87,8 @@ public class EvolutionController : ControllerBase
 
     [HttpPost("gameHistories")]
     public async ValueTask<GameHistoriesResponse> GetGameHistoriesAsync(
-                [FromServices] IGetService<GetGameHistoriesQuery, GameHistoriesResult> service,
-                GetGameHistoriesRequest request)
+        [FromServices] IGetService<GetGameHistoriesQuery, GameHistoriesResult> service,
+        GetGameHistoriesRequest request)
     {
         var result = await service.GetAsync(new GetGameHistoriesQuery(
             request.ApiUrl,
@@ -113,6 +113,71 @@ public class EvolutionController : ControllerBase
                 AdditionalData = x.AdditionalData
             })
         };
+    }
+
+    /// <summary>
+    /// Gets the game records asynchronous.
+    /// </summary>
+    /// <param name="service">The service.</param>
+    /// <param name="request">The request.</param>
+    /// <returns></returns>
+    /// <remarks>
+    /// <b>Example</b><br />
+    ///
+    ///     Post
+    ///
+    ///         {
+    ///             "apiUrl": "https://babylonpega2.evo-games.com",
+    ///             "casinoId": "babylonpega20001",
+    ///             "gameHistoryApiToken": "c72ef24e22cdf7646fad3934b1092a37d46180f6",
+    ///             "startTime": "2023-07-29T16:17:00+08:00",
+    ///             "endTime": "2023-07-29T16:18:00+08:00"
+    ///         }
+    /// </remarks>
+    [HttpPost("gameRecords")]
+    public async IAsyncEnumerable<GameRecordResponse> GetGameRecordsAsync(
+        [FromServices] IQueryService<GameRecordQuery, GameRecordResult> service,
+        GameRecordRequest request)
+    {
+        var query = new GameRecordQuery(
+            request.ApiUrl,
+            request.CasinoId,
+            request.GameHistoryApiToken,
+            request.StartTime,
+            request.EndTime);
+
+        var gameRecords = await service
+            .QueryAsync(
+            query: query,
+            cancellationToken: HttpContext.RequestAborted)
+            .ToArrayAsync()
+            .ConfigureAwait(false)
+            ?? Enumerable.Empty<GameRecordResult>();
+
+        if (!gameRecords.Any())
+        {
+            yield break;
+        }
+
+        foreach (var gameRecord in gameRecords)
+        {
+            yield return new GameRecordResponse(
+                ExternalRoundId: gameRecord.ExternalRoundId,
+                ExternalGameId: gameRecord.ExternalGameId,
+                PlayerCode: gameRecord.PlayerCode,
+                IsClosed: gameRecord.IsClosed,
+                IsCancelled: gameRecord.IsCancelled,
+                IsVoid: gameRecord.IsVoid,
+                ExternalCreatedOn: gameRecord.ExternalCreatedOn,
+                ExternalClosedOn: gameRecord.ExternalClosedOn,
+                Bet: gameRecord.Bet,
+                ValidBet: gameRecord.ValidBet,
+                Settle: gameRecord.Settle,
+                Commission: gameRecord.Commission,
+                Turnover: gameRecord.Turnover,
+                WinLoss: gameRecord.WinLoss,
+                AdditionalData: gameRecord.AdditionalData);
+        }
     }
 
     /// <summary>

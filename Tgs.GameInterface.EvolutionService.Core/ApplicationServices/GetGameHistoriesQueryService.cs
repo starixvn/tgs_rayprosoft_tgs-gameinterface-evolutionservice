@@ -16,7 +16,7 @@ internal class GetGameHistoriesQueryService : IGetService<GetGameHistoriesQuery,
 
     public async ValueTask<GameHistoriesResult> GetAsync(GetGameHistoriesQuery query, CancellationToken cancellationToken = default)
     {
-        var authorization = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{query.casinoId}:{query.gameHistoryApiToken}"));
+        var authorization = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{query.CasinoId}:{query.GameHistoryApiToken}"));
 
         var result = await _client.GetGameHistoryAsync(
             query.ApiUrl,
@@ -47,7 +47,7 @@ internal class GetGameHistoriesQueryService : IGetService<GetGameHistoriesQuery,
                 SettleAmount = p.Bets.Sum(b => b.Payout),
                 AdditionalData = JsonSerializer.Serialize(new
                 {
-                    Participants = g.Participants,
+                    g.Participants,
                     result = g.Result
                 })
             }))) ?? Array.Empty<GameHistoryRecord>()

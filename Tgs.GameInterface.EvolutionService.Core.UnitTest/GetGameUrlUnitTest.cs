@@ -2,17 +2,15 @@
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RichardSzalay.MockHttp;
 using Tgs.GameInterface.EvolutionService.Core.Models;
 using Tgs.GameInterface.EvolutionService.Core.Models.GameUrl;
 
 namespace Tgs.GameInterface.EvolutionService.Core.UnitTest;
 
-[TestClass]
 public class GetGameUrlUnitTest
 {
-    [TestMethod]
+    [Fact]
     public async Task Can_Get_Game_Url()
     {
         var apiUrl = new Uri("http://localhost/ua/v1/key/token");
@@ -73,7 +71,7 @@ public class GetGameUrlUnitTest
 
         var result = await client.GetGameUrlAsync(apiUrl, request, default);
 
-        Assert.AreEqual("Entry", result.Entry);
-        Assert.AreEqual("EntryEmbedded", result.EntryEmbedded);
+        Assert.Equal("Entry", result.Entry);
+        Assert.Equal("EntryEmbedded", result.EntryEmbedded);
     }
 }

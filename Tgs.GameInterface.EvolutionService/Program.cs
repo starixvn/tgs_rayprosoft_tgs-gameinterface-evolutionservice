@@ -68,7 +68,7 @@ builder.Services.AddSwaggerGen(c =>
     }
 });
 
-builder.Services.AddEvoServiceCore();
+builder.Services.AddGameInterfaceCore();
 
 builder.Services
     .AddOpenTelemetry()
