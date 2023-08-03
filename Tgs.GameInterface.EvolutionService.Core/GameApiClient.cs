@@ -241,16 +241,16 @@ public class GameApiClient : IGameApiClient
                         ExternalClosedOn: DateTimeOffset.Parse(game["settledAt"]!.ToString()),
                         Bet: participant["bets"]!.AsArray().Sum(bet => bet!["stake"]!.GetValue<decimal>()),
                         Settle: participant["bets"]!.AsArray().Sum(bet => bet!["payout"]!.GetValue<decimal>()),
-                        AdditionalData: new JsonObject
+                        AdditionalData: JsonSerializer.Serialize(new
                         {
-                            ["id"] = game["id"]?.ToString(),
-                            ["status"] = game["status"]?.ToString(),
-                            ["table"] = game["table"]?.ToJsonString(),
-                            ["startedAt"] = game["startedAt"]?.ToString(),
-                            ["settledAt"] = game["settledAt"]?.ToString(),
-                            ["participant"] = participant!.ToJsonString(),
-                            ["result"] = game["result"]!.ToJsonString(),
-                        }.ToJsonString()
+                            id = game["id"]?.ToString(),
+                            status = game["status"]?.ToString(),
+                            table = game["table"],
+                            startedAt = game["startedAt"]?.ToString(),
+                            settledAt = game["settledAt"]?.ToString(),
+                            participant = participant!,
+                            result = game["result"]!,
+                        })
                        ))));
 
         if (!gameHistories.Any())
