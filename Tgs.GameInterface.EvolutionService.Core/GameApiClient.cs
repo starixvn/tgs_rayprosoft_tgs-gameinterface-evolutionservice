@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -227,22 +228,30 @@ public class GameApiClient : IGameApiClient
 
         var jsonNode = JsonNode.Parse(responseMessage)!;
 
-        var gameHistories = jsonNode.Deserialize<GamHistoryRoundResponse>()?.Data.SelectMany(
-            data => data.Games.SelectMany(
-                game => game.Participants.Select(
-                    participant =>
-                    new GameHistoryInfo(
-                        ExternalRoundId: game.Id,
-                        ExternalGameId: game.Table.Id,
-                        PlayerCode: participant.PlayerId,
-                        IsCancel: false,
-                        IsVoid: game.Status.Equals("Cancelled", StringComparison.OrdinalIgnoreCase),
-                        ExternalCreatedOn: game.StartedAt,
-                        ExternalClosedOn: game.SettledAt,
-                        Bet: participant.Bets.Sum(b => b.Stake),
-                        Settle: participant.Bets.Sum(b => b.Payout),
-                        AdditionalData: JsonSerializer.Serialize(game.Result))
-                    ))) ?? Enumerable.Empty<GameHistoryInfo>();
+        var gameHistories = jsonNode["data"]!.AsArray().SelectMany(
+            data => data!["games"]!.AsArray().SelectMany(
+                game => game!["participants"]!.AsArray().Select(
+                    participant => new GameHistoryInfo(
+                        ExternalRoundId: game["id"]!.ToString(),
+                        ExternalGameId: game["table"]!["id"]!.ToString(),
+                        PlayerCode: participant!["playerId"]!.ToString(),
+                        IsCancel: !participant["bets"]!.AsArray().Any(),
+                        IsVoid: game["status"]!.ToString().Equals("Cancelled", StringComparison.OrdinalIgnoreCase),
+                        ExternalCreatedOn: DateTimeOffset.Parse(game["startedAt"]!.ToString()),
+                        ExternalClosedOn: DateTimeOffset.Parse(game["settledAt"]!.ToString()),
+                        Bet: participant["bets"]!.AsArray().Sum(bet => bet!["stake"]!.GetValue<decimal>()),
+                        Settle: participant["bets"]!.AsArray().Sum(bet => bet!["payout"]!.GetValue<decimal>()),
+                        AdditionalData: new JsonObject
+                        {
+                            ["id"] = game["id"]?.ToString(),
+                            ["status"] = game["status"]?.ToString(),
+                            ["table"] = game["table"]?.ToJsonString(),
+                            ["startedAt"] = game["startedAt"]?.ToString(),
+                            ["settledAt"] = game["settledAt"]?.ToString(),
+                            ["participant"] = participant!.ToJsonString(),
+                            ["result"] = game["result"]!.ToJsonString(),
+                        }.ToJsonString()
+                       ))));
 
         if (!gameHistories.Any())
         {
