@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Linq;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -9,7 +8,6 @@ using System.Text.Json.Serialization;
 using System.Web;
 using System.Xml.Serialization;
 using Microsoft.Extensions.Logging;
-using Tgs.GameInterface.EvolutionService.Core.ApplicationServices.GamHistory;
 using Tgs.GameInterface.EvolutionService.Core.Models;
 
 namespace Tgs.GameInterface.EvolutionService.Core;

@@ -59,7 +59,6 @@ public class GameRecordQueryServiceUnitTest
             .QueryAsync(
             query)
             .ToArrayAsync()
-            .ConfigureAwait(false)
             ?? Enumerable.Empty<GameRecordResult>();
 
         Assert.NotNull(actual);
@@ -133,7 +132,6 @@ public class GameRecordQueryServiceUnitTest
             .QueryAsync(
             query)
             .ToArrayAsync()
-            .ConfigureAwait(false)
             ?? Enumerable.Empty<GameRecordResult>();
 
         Assert.NotNull(actual);

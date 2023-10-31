@@ -7,7 +7,9 @@ namespace Tgs.GameInterface.EvolutionService.Core.Models;
 public class DebitResponse
 {
     [XmlElement("datetime")]
+#pragma warning disable IDE1006 // 命名樣式
     public string _Datetime { get; init; } = default!;
+#pragma warning restore IDE1006 // 命名樣式
 
     [XmlElement("balance")]
     public decimal Balance { get; init; }

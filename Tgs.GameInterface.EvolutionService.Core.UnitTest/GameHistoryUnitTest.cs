@@ -185,7 +185,6 @@ public class GameHistoryUnitTest
             startDate,
             endDate)
             .ToArrayAsync()
-            .ConfigureAwait(false)
             ?? Enumerable.Empty<GameHistoryInfo>();
 
         Assert.NotNull(actual);
@@ -309,7 +308,6 @@ public class GameHistoryUnitTest
             startDate,
             endDate)
             .ToArrayAsync()
-            .ConfigureAwait(false)
             ?? Enumerable.Empty<GameHistoryInfo>();
 
         Assert.NotNull(actual);
@@ -323,6 +321,161 @@ public class GameHistoryUnitTest
         Assert.Equal(25, actual.ElementAt(0).Bet);
         Assert.Equal(50, actual.ElementAt(0).Settle);
         Assert.NotEmpty(actual.ElementAt(0).AdditionalData);
+    }
+
+    [Fact]
+    public async Task More_Than_1_participant()
+    {
+        var apiUrl = new Uri("http://localhost");
+        var authorization = "authorization";
+        var startDate = DateTimeOffset.Parse("2023-07-10T21:22:00+08:00");
+        var endDate = DateTimeOffset.Parse("2023-07-10T21:25:00+08:00");
+
+        var response = new JsonObject
+        {
+            ["uuid"] = "40d80f2f-2f1c-43f9-9e49-b9395883ff7a",
+            ["timestamp"] = "2023-08-03T07:57:39.840545834",
+            ["data"] = new JsonArray
+            {
+              new JsonObject{
+                  ["date"] = "2023-07-31",
+                  ["games"] = new JsonArray
+                  {
+                      new JsonObject{
+                        ["id"] = "1776f9341cfa969d4b939e4a",
+                        ["gameProvider"] = "evolution",
+                        ["startedAt"] = "2023-07-31T14:11:52.344Z",
+                        ["settledAt"] = "2023-07-31T14:14:16.320Z",
+                        ["status"] = "Cancelled",
+                        ["gameType"] = "megaball",
+                        ["table"] = new JsonObject
+                        {
+                            ["id"] = "MegaBall00000001",
+                            ["name"] = "Mega Ball"
+                        },
+                        ["dealer"] = new JsonObject
+                        {
+                            ["uid"] = "tts125999_______",
+                            ["name"] = "Arianna"
+                        },
+                        ["currency"] = "PHP",
+                        ["participants"] = new JsonArray
+                        {
+                            new JsonObject{
+                                ["casinoId"] = "babylonpega20001",
+                                ["playerId"] = "4uk0lg559sut",
+                                ["screenName"] = "4uk0lg559sut",
+                                ["playerGameId"] = "1776f9341cfa969d4b939e4a-ress7t7qlwpgwyrq",
+                                ["sessionId"] = "ress7t7qlwpgwyrqrgwdcd5jnl4xlkscabfedea0",
+                                ["casinoSessionId"] = "rYFXkCnOodkat2McoHbQSzyxWt3bLbBZrvG0qERTOg6qbss02XXGNcrgRTGgh3gym",
+                                ["currency"] = "PHP",
+                                ["bets"] = new JsonArray {
+                                    new JsonObject{
+                                        ["code"]= "MB_6Cards",
+                                    ["description"]= "6 Mega Ball Cards",
+                                    ["stake"]= 30,
+                                    ["payout"]=30,
+                                    ["placedOn"]= "2023-07-31T14:12:05.369Z",
+                                    ["transactionId"]= "690806269826092102",
+                                    ["currencyRateVersion"]= "rgut7btabqeaaaan"
+                                    }
+                                },
+                                ["configOverlays"] = new JsonArray(),
+                                ["playMode"] = "RealMoney",
+                                ["channel"] = "mobile",
+                                ["os"] = "Android",
+                                ["device"] = "SmartPhone",
+                                ["skinId"] = "PB",
+                                ["brandId"] = "PB"
+                            },
+                            new JsonObject{
+                                ["casinoId"] = "babylonpega20001",
+                                ["playerId"] = "4uki9crgioxc",
+                                ["screenName"] = "4uki9crgioxc",
+                                ["playerGameId"] = "1776f9341cfa969d4b939e4a-rfy42hpdtnzjvzc4",
+                                ["sessionId"] = "rfy42hpdtnzjvzc4rgweh3wwsfwrfvxj36f93dca",
+                                ["casinoSessionId"] = "XvQMJEivJt7P35CMf2T2cdFhIhJqwQvZQ6mpeQrNnQokOH1OsG9WEbvHKDye4bGuo",
+                                ["currency"] = "PHP",
+                                ["bets"] = new JsonArray {
+                                    new JsonObject{
+                                        ["code"]= "MB_3Cards",
+                                    ["description"]= "3 Mega Ball Cards",
+                                    ["stake"]= 15,
+                                    ["payout"]=15,
+                                    ["placedOn"]= "2023-07-31T14:12:05.368Z",
+                                    ["transactionId"]=  "690806269825997102",
+                                    ["currencyRateVersion"]= "rgut7btabqeaaaan"
+                                    }
+                                },
+                                ["configOverlays"] = new JsonArray(),
+                                ["playMode"] = "RealMoney",
+                                ["channel"] = "mobile",
+                                ["os"] = "Android",
+                                ["device"] = "SmartPhone",
+                                ["skinId"] = "PB",
+                                ["brandId"] = "PB"
+                            }
+                        },
+                        ["result"] = new JsonObject
+                        {
+                            ["drawnBalls"] = new JsonArray
+                            {
+                                new JsonObject
+                                {
+                                    ["multiplier"]=5
+                                }
+                            }
+                        },
+                        ["wager"] =45.0m,
+                        ["payout"] = 45.0m
+                       }
+                    }
+                }
+            }
+        };
+        var uriBuilder = new UriBuilder(new Uri(apiUrl, "/api/gamehistory/v1/casino/games"));
+        var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+        query["startDate"] = startDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+        query["endDate"] = endDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+        uriBuilder.Query = query.ToString();
+        var handler = new MockHttpMessageHandler();
+        _ = handler.Expect(HttpMethod.Get, uriBuilder.ToString())
+            .WithHeaders("Authorization", $"Basic {authorization}")
+            .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString(), Encoding.UTF8, "application/json"));
+
+        var fakeHttpClient = handler.ToHttpClient();
+        var fakeLog = NullLogger<GameApiClient>.Instance;
+        var client = new GameApiClient(fakeHttpClient, fakeLog);
+
+        var actual = await client
+            .GetGameHistoryAsync(
+            apiUrl,
+            authorization,
+            startDate,
+            endDate)
+            .ToArrayAsync()
+            ?? Enumerable.Empty<GameHistoryInfo>();
+
+        Assert.NotNull(actual);
+        Assert.Equal("1776f9341cfa969d4b939e4a", actual.ElementAt(0).ExternalRoundId);
+        Assert.Equal("MegaBall00000001", actual.ElementAt(0).ExternalGameId);
+        Assert.Equal("4uk0lg559sut", actual.ElementAt(0).PlayerCode);
+        Assert.False(actual.ElementAt(0).IsCancel);
+        Assert.True(actual.ElementAt(0).IsVoid);
+        Assert.Equal(DateTimeOffset.Parse("2023-07-31T14:11:52.344Z"), actual.ElementAt(0).ExternalCreatedOn);
+        Assert.Equal(DateTimeOffset.Parse("2023-07-31T14:14:16.320Z"), actual.ElementAt(0).ExternalClosedOn);
+        Assert.Equal(30, actual.ElementAt(0).Bet);
+        Assert.Equal(30, actual.ElementAt(0).Settle);
+        Assert.NotEmpty(actual.ElementAt(0).AdditionalData);
+
+        Assert.Equal("1776f9341cfa969d4b939e4a", actual.ElementAt(1).ExternalRoundId);
+        Assert.Equal("MegaBall00000001", actual.ElementAt(1).ExternalGameId);
+        Assert.Equal("4uki9crgioxc", actual.ElementAt(1).PlayerCode);
+        Assert.False(actual.ElementAt(1).IsCancel);
+        Assert.True(actual.ElementAt(1).IsVoid);
+        Assert.Equal(15, actual.ElementAt(1).Bet);
+        Assert.Equal(15, actual.ElementAt(1).Settle);
+        Assert.NotEmpty(actual.ElementAt(1).AdditionalData);
     }
 
     [Fact]
@@ -360,7 +513,6 @@ public class GameHistoryUnitTest
             startDate,
             endDate)
             .ToArrayAsync()
-            .ConfigureAwait(false)
             ?? Enumerable.Empty<GameHistoryInfo>();
 
         Assert.NotNull(actual);
@@ -466,7 +618,6 @@ public class GameHistoryUnitTest
             startDate,
             endDate)
             .ToArrayAsync()
-            .ConfigureAwait(false)
             ?? Enumerable.Empty<GameHistoryInfo>();
 
         Assert.NotNull(actual);
@@ -599,7 +750,6 @@ public class GameHistoryUnitTest
             startDate,
             endDate)
             .ToArrayAsync()
-            .ConfigureAwait(false)
             ?? Enumerable.Empty<GameHistoryInfo>();
 
         Assert.NotNull(actual);
@@ -740,7 +890,6 @@ public class GameHistoryUnitTest
             startDate,
             endDate)
             .ToArrayAsync()
-            .ConfigureAwait(false)
             ?? Enumerable.Empty<GameHistoryInfo>();
 
         Assert.NotNull(actual);
@@ -754,162 +903,5 @@ public class GameHistoryUnitTest
         Assert.Equal(0, actual.ElementAt(0).Bet);
         Assert.Equal(0, actual.ElementAt(0).Settle);
         Assert.NotEmpty(actual.ElementAt(0).AdditionalData);
-    }
-
-    [Fact]
-    public async Task More_Than_1_participant()
-    {
-        var apiUrl = new Uri("http://localhost");
-        var authorization = "authorization";
-        var startDate = DateTimeOffset.Parse("2023-07-10T21:22:00+08:00");
-        var endDate = DateTimeOffset.Parse("2023-07-10T21:25:00+08:00");
-
-        var response = new JsonObject
-        {
-            ["uuid"] = "40d80f2f-2f1c-43f9-9e49-b9395883ff7a",
-            ["timestamp"] = "2023-08-03T07:57:39.840545834",
-            ["data"] = new JsonArray
-            {
-              new JsonObject{
-                  ["date"] = "2023-07-31",
-                  ["games"] = new JsonArray
-                  {
-                      new JsonObject{
-                        ["id"] = "1776f9341cfa969d4b939e4a",
-                        ["gameProvider"] = "evolution",
-                        ["startedAt"] = "2023-07-31T14:11:52.344Z",
-                        ["settledAt"] = "2023-07-31T14:14:16.320Z",
-                        ["status"] = "Cancelled",
-                        ["gameType"] = "megaball",
-                        ["table"] = new JsonObject
-                        {
-                            ["id"] = "MegaBall00000001",
-                            ["name"] = "Mega Ball"
-                        },
-                        ["dealer"] = new JsonObject
-                        {
-                            ["uid"] = "tts125999_______",
-                            ["name"] = "Arianna"
-                        },
-                        ["currency"] = "PHP",
-                        ["participants"] = new JsonArray
-                        {
-                            new JsonObject{
-                                ["casinoId"] = "babylonpega20001",
-                                ["playerId"] = "4uk0lg559sut",
-                                ["screenName"] = "4uk0lg559sut",
-                                ["playerGameId"] = "1776f9341cfa969d4b939e4a-ress7t7qlwpgwyrq",
-                                ["sessionId"] = "ress7t7qlwpgwyrqrgwdcd5jnl4xlkscabfedea0",
-                                ["casinoSessionId"] = "rYFXkCnOodkat2McoHbQSzyxWt3bLbBZrvG0qERTOg6qbss02XXGNcrgRTGgh3gym",
-                                ["currency"] = "PHP",
-                                ["bets"] = new JsonArray {
-                                    new JsonObject{
-                                        ["code"]= "MB_6Cards",
-                                    ["description"]= "6 Mega Ball Cards",
-                                    ["stake"]= 30,
-                                    ["payout"]=30,
-                                    ["placedOn"]= "2023-07-31T14:12:05.369Z",
-                                    ["transactionId"]= "690806269826092102",
-                                    ["currencyRateVersion"]= "rgut7btabqeaaaan"
-                                    }
-                                },
-                                ["configOverlays"] = new JsonArray(),
-                                ["playMode"] = "RealMoney",
-                                ["channel"] = "mobile",
-                                ["os"] = "Android",
-                                ["device"] = "SmartPhone",
-                                ["skinId"] = "PB",
-                                ["brandId"] = "PB"
-                            },
-                            new JsonObject{
-                                ["casinoId"] = "babylonpega20001",
-                                ["playerId"] = "4uki9crgioxc",
-                                ["screenName"] = "4uki9crgioxc",
-                                ["playerGameId"] = "1776f9341cfa969d4b939e4a-rfy42hpdtnzjvzc4",
-                                ["sessionId"] = "rfy42hpdtnzjvzc4rgweh3wwsfwrfvxj36f93dca",
-                                ["casinoSessionId"] = "XvQMJEivJt7P35CMf2T2cdFhIhJqwQvZQ6mpeQrNnQokOH1OsG9WEbvHKDye4bGuo",
-                                ["currency"] = "PHP",
-                                ["bets"] = new JsonArray {
-                                    new JsonObject{
-                                        ["code"]= "MB_3Cards",
-                                    ["description"]= "3 Mega Ball Cards",
-                                    ["stake"]= 15,
-                                    ["payout"]=15,
-                                    ["placedOn"]= "2023-07-31T14:12:05.368Z",
-                                    ["transactionId"]=  "690806269825997102",
-                                    ["currencyRateVersion"]= "rgut7btabqeaaaan"
-                                    }
-                                },
-                                ["configOverlays"] = new JsonArray(),
-                                ["playMode"] = "RealMoney",
-                                ["channel"] = "mobile",
-                                ["os"] = "Android",
-                                ["device"] = "SmartPhone",
-                                ["skinId"] = "PB",
-                                ["brandId"] = "PB"
-                            }
-                        },
-                        ["result"] = new JsonObject
-                        {
-                            ["drawnBalls"] = new JsonArray(),
-                            ["drawnBalls"] = new JsonArray
-                            {
-                                new JsonObject
-                                {
-                                    ["multiplier"]=5
-                                }
-                            }
-                        },
-                        ["wager"] =45.0m,
-                        ["payout"] = 45.0m
-                       }
-                    }
-                }
-            }
-        };
-        var uriBuilder = new UriBuilder(new Uri(apiUrl, "/api/gamehistory/v1/casino/games"));
-        var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-        query["startDate"] = startDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-        query["endDate"] = endDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-        uriBuilder.Query = query.ToString();
-        var handler = new MockHttpMessageHandler();
-        _ = handler.Expect(HttpMethod.Get, uriBuilder.ToString())
-            .WithHeaders("Authorization", $"Basic {authorization}")
-            .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString(), Encoding.UTF8, "application/json"));
-
-        var fakeHttpClient = handler.ToHttpClient();
-        var fakeLog = NullLogger<GameApiClient>.Instance;
-        var client = new GameApiClient(fakeHttpClient, fakeLog);
-
-        var actual = await client
-            .GetGameHistoryAsync(
-            apiUrl,
-            authorization,
-            startDate,
-            endDate)
-            .ToArrayAsync()
-            .ConfigureAwait(false)
-            ?? Enumerable.Empty<GameHistoryInfo>();
-
-        Assert.NotNull(actual);
-        Assert.Equal("1776f9341cfa969d4b939e4a", actual.ElementAt(0).ExternalRoundId);
-        Assert.Equal("MegaBall00000001", actual.ElementAt(0).ExternalGameId);
-        Assert.Equal("4uk0lg559sut", actual.ElementAt(0).PlayerCode);
-        Assert.False(actual.ElementAt(0).IsCancel);
-        Assert.True(actual.ElementAt(0).IsVoid);
-        Assert.Equal(DateTimeOffset.Parse("2023-07-31T14:11:52.344Z"), actual.ElementAt(0).ExternalCreatedOn);
-        Assert.Equal(DateTimeOffset.Parse("2023-07-31T14:14:16.320Z"), actual.ElementAt(0).ExternalClosedOn);
-        Assert.Equal(30, actual.ElementAt(0).Bet);
-        Assert.Equal(30, actual.ElementAt(0).Settle);
-        Assert.NotEmpty(actual.ElementAt(0).AdditionalData);
-
-        Assert.Equal("1776f9341cfa969d4b939e4a", actual.ElementAt(1).ExternalRoundId);
-        Assert.Equal("MegaBall00000001", actual.ElementAt(1).ExternalGameId);
-        Assert.Equal("4uki9crgioxc", actual.ElementAt(1).PlayerCode);
-        Assert.False(actual.ElementAt(1).IsCancel);
-        Assert.True(actual.ElementAt(1).IsVoid);
-        Assert.Equal(15, actual.ElementAt(1).Bet);
-        Assert.Equal(15, actual.ElementAt(1).Settle);
-        Assert.NotEmpty(actual.ElementAt(1).AdditionalData);
     }
 }
