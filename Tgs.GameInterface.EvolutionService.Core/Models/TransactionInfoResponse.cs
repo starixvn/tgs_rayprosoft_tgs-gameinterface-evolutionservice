@@ -7,9 +7,8 @@ namespace Tgs.GameInterface.EvolutionService.Core.Models;
 public class TransactionInfoResponse
 {
     [XmlElement("datetime")]
-#pragma warning disable IDE1006 // 命名樣式
-    public string _Datetime { get; init; } = default!;
-#pragma warning restore IDE1006 // 命名樣式
+    public string TransDatetime { get; init; } = default!;
+
 
     [XmlElement("amount")]
     public decimal Amount { get; init; }
@@ -21,7 +20,7 @@ public class TransactionInfoResponse
     public string CCode { get; init; } = default!;
 
     [XmlIgnore]
-    public DateTime Datetime => DateTime.ParseExact(_Datetime, "ddd MMM dd HH:mm:ss UTC yyyy", CultureInfo.InvariantCulture);
+    public DateTime Datetime => DateTime.ParseExact(TransDatetime, "ddd MMM dd HH:mm:ss UTC yyyy", CultureInfo.InvariantCulture);
 
     [XmlElement("datetime-iso")]
     public DateTimeOffset DatetimeISO { get; init; }

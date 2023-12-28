@@ -4,15 +4,8 @@ using Tgs.ServiceUtility;
 
 namespace Tgs.GameInterface.EvolutionService.Core.ApplicationServices;
 
-internal class GetSlotGameUrlQueryService : IGetService<GetSlotGameUrlQuery, GameUrlResult>
+internal class GetSlotGameUrlQueryService(IGameApiClient client) : IGetService<GetSlotGameUrlQuery, GameUrlResult>
 {
-    private readonly IGameApiClient _client;
-
-    public GetSlotGameUrlQueryService(IGameApiClient client)
-    {
-        _client = client ?? throw new ArgumentNullException(nameof(client));
-    }
-
     public async ValueTask<GameUrlResult> GetAsync(GetSlotGameUrlQuery query, CancellationToken cancellationToken = default)
     {
         var data = new GameUrlRequest
@@ -58,7 +51,7 @@ internal class GetSlotGameUrlQueryService : IGetService<GetSlotGameUrlQuery, Gam
             }
         };
 
-        var result = await _client.GetGameUrlAsync(query.Ua2AuthenticationUrl, data, cancellationToken).ConfigureAwait(false);
+        var result = await client.GetGameUrlAsync(query.Ua2AuthenticationUrl, data, cancellationToken).ConfigureAwait(false);
 
         return new GameUrlResult(
             result.Entry,

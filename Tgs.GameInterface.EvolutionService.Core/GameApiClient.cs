@@ -12,9 +12,16 @@ using Tgs.GameInterface.EvolutionService.Core.Models;
 
 namespace Tgs.GameInterface.EvolutionService.Core;
 
-public class GameApiClient : IGameApiClient
+public class GameApiClient(
+    HttpClient client,
+    ILogger<GameApiClient> logger) : IGameApiClient
 {
-    private static readonly JsonSerializerOptions? _SerializerOptions = new()
+    private static readonly JsonSerializerOptions _GameUrlSerializerOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
+    private static readonly JsonSerializerOptions _SerializerOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         Converters =
@@ -23,32 +30,20 @@ public class GameApiClient : IGameApiClient
         }
     };
 
-    private readonly HttpClient _client;
-    private readonly ILogger<GameApiClient> _logger;
-
-    public GameApiClient(
-        HttpClient client,
-        ILogger<GameApiClient> logger
-    )
-    {
-        _client = client ?? throw new ArgumentNullException(nameof(client));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
-
     public async ValueTask<CreditResponse> CreditAsync(
-        Uri apiUrl,
-        string cCode,
-        string ecId,
-        string euId,
-        decimal amount,
-        string eTransId,
-        string createUser,
-        CancellationToken cancellationToken = default)
+            Uri apiUrl,
+            string cCode,
+            string ecId,
+            string euId,
+            decimal amount,
+            string eTransId,
+            string createUser,
+            CancellationToken cancellationToken = default)
     {
         var sw = Stopwatch.StartNew();
 
         var response =
-            await _client.PostAsync(
+            await client.PostAsync(
                 $"{apiUrl}api/ecashier?cCode={cCode}&ecID={ecId}&euID={euId}&amount={amount}&eTransID={eTransId}&createuser={createUser}&output=1",
                 new StringContent("", Encoding.UTF8, "application/x-www-form-urlencoded"), cancellationToken);
 
@@ -77,7 +72,7 @@ public class GameApiClient : IGameApiClient
     {
         var sw = Stopwatch.StartNew();
         var response =
-            await _client.PostAsync(
+            await client.PostAsync(
                 $"{apiUrl}api/ecashier?cCode={cCode}&ecID={ecId}&euID={euId}&amount={amount}&eTransID={eTransId}&output=1",
                 new StringContent("", Encoding.UTF8, "application/x-www-form-urlencoded"), cancellationToken);
 
@@ -105,7 +100,7 @@ public class GameApiClient : IGameApiClient
         var sw = Stopwatch.StartNew();
 
         var response =
-            await _client.GetAsync($"{apiUrl}api/ecashier?cCode={cCode}&ecID={ecId}&euID={euId}&output=1",
+            await client.GetAsync($"{apiUrl}api/ecashier?cCode={cCode}&ecID={ecId}&euID={euId}&output=1",
                 cancellationToken);
 
         sw.Stop();
@@ -185,7 +180,7 @@ public class GameApiClient : IGameApiClient
 
         httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Basic", authorization);
 
-        var response = await _client.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
+        var response = await client.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
 
         sw.Stop();
 
@@ -214,7 +209,7 @@ public class GameApiClient : IGameApiClient
 
         httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Basic", authorization);
 
-        var httpResponseMessage = await _client.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
+        var httpResponseMessage = await client.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
 
         sw.Stop();
 
@@ -233,7 +228,7 @@ public class GameApiClient : IGameApiClient
                         ExternalRoundId: game["id"]!.ToString(),
                         ExternalGameId: game["table"]!["id"]!.ToString(),
                         PlayerCode: participant!["playerId"]!.ToString(),
-                        IsCancel: !participant["bets"]!.AsArray().Any(),
+                        IsCancel: participant["bets"]!.AsArray().Count == 0,
                         IsVoid: game["status"]!.ToString().Equals("Cancelled", StringComparison.OrdinalIgnoreCase),
                         ExternalCreatedOn: DateTimeOffset.Parse(game["startedAt"]!.ToString()),
                         ExternalClosedOn: DateTimeOffset.Parse(game["settledAt"]!.ToString()),
@@ -272,7 +267,7 @@ public class GameApiClient : IGameApiClient
         var content = new StringContent(JsonSerializer.Serialize(request, _SerializerOptions), Encoding.UTF8,
             "application/json");
 
-        var response = await _client.PostAsync(apiUrl, content, cancellationToken);
+        var response = await client.PostAsync(apiUrl, content, cancellationToken);
 
         sw.Stop();
 
@@ -282,10 +277,7 @@ public class GameApiClient : IGameApiClient
 
         return JsonSerializer.Deserialize<GameUrlResponse>(
             await response.Content.ReadAsStringAsync(cancellationToken),
-            new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            })!;
+            options: _GameUrlSerializerOptions)!;
     }
 
     public async ValueTask<PlayerInfoResponse> GetPlayerInfoAsync(
@@ -298,7 +290,7 @@ public class GameApiClient : IGameApiClient
         var sw = Stopwatch.StartNew();
 
         var response =
-            await _client.GetAsync($"{apiUrl}api/ecashier?cCode={cCode}&ecID={ecId}&euID={euId}&output=1",
+            await client.GetAsync($"{apiUrl}api/ecashier?cCode={cCode}&ecID={ecId}&euID={euId}&output=1",
                 cancellationToken);
 
         sw.Stop();
@@ -326,7 +318,7 @@ public class GameApiClient : IGameApiClient
         var sw = Stopwatch.StartNew();
 
         var response =
-            await _client.GetAsync(
+            await client.GetAsync(
                 $"{apiUrl}api/ecashier?cCode={cCode}&ecID={ecId}&euID={euId}&output=1&eTransID={eTransId}",
                 cancellationToken);
 
@@ -361,7 +353,7 @@ public class GameApiClient : IGameApiClient
         };
 
         var response =
-            await _client.PostAsync($"{apiUrl}api/external/kickPlayer/v1/{casinoId}/{apiToken}",
+            await client.PostAsync($"{apiUrl}api/external/kickPlayer/v1/{casinoId}/{apiToken}",
                 new StringContent(JsonSerializer.Serialize(content, _SerializerOptions), Encoding.UTF8, "application/json"), cancellationToken);
 
         sw.Stop();
@@ -411,6 +403,6 @@ public class GameApiClient : IGameApiClient
             RecordedOn = DateTimeOffset.UtcNow
         };
 
-        _logger.LogInformation("{apiLogEvent}", JsonSerializer.Serialize(apiLogEvent));
+        logger.LogInformation("{apiLogEvent}", JsonSerializer.Serialize(apiLogEvent));
     }
 }

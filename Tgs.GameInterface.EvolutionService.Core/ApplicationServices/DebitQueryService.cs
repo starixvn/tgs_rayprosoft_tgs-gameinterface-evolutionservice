@@ -2,18 +2,11 @@
 
 namespace Tgs.GameInterface.EvolutionService.Core.ApplicationServices;
 
-internal class DebitQueryService : IGetService<DebitQuery, DebitResult>
+internal class DebitQueryService(IGameApiClient client) : IGetService<DebitQuery, DebitResult>
 {
-    private readonly IGameApiClient _client;
-
-    public DebitQueryService(IGameApiClient client)
-    {
-        _client = client ?? throw new ArgumentNullException(nameof(client));
-    }
-
     public async ValueTask<DebitResult> GetAsync(DebitQuery query, CancellationToken cancellationToken = default)
     {
-        var result = await _client.DebitAsync(
+        var result = await client.DebitAsync(
             query.ApiUrl,
             "EDB",
             query.AgentId,

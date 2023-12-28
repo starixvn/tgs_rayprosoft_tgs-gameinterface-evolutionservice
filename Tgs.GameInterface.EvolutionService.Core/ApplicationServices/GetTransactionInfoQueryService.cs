@@ -2,18 +2,11 @@
 
 namespace Tgs.GameInterface.EvolutionService.Core.ApplicationServices;
 
-internal class GetTransactionInfoQueryService : IGetService<GetTransactionInfoQuery, TransactionInfoResult>
+internal class GetTransactionInfoQueryService(IGameApiClient client) : IGetService<GetTransactionInfoQuery, TransactionInfoResult>
 {
-    private readonly IGameApiClient _client;
-
-    public GetTransactionInfoQueryService(IGameApiClient client)
-    {
-        _client = client ?? throw new ArgumentNullException(nameof(client));
-    }
-
     public async ValueTask<TransactionInfoResult> GetAsync(GetTransactionInfoQuery query, CancellationToken cancellationToken = default)
     {
-        var result = await _client.GetTransactionInfoAsync(
+        var result = await client.GetTransactionInfoAsync(
             query.ApiUrl,
             "TRI",
             query.AgentId,

@@ -28,7 +28,7 @@ public class GameRecordQueryServiceUnitTest
             .Returns(authorization);
 
         var resp = new GameHistoryInfo[]{
-            new GameHistoryInfo(
+            new(
                 ExternalRoundId: "177648ae4852083a345a4bc6",
                 ExternalGameId: "pwsaqk24fcz5qpcr",
                 PlayerCode: "4ui0010qu2m0",
@@ -100,8 +100,7 @@ public class GameRecordQueryServiceUnitTest
             .Returns(authorization);
 
         var resp = new GameHistoryInfo[]{
-            new GameHistoryInfo(
-
+            new(
                 ExternalRoundId: "1770845006be6caf347bdd1f",
                 ExternalGameId: "Craps00000000001",
                 PlayerCode: "4ugqv6fk4iqw",

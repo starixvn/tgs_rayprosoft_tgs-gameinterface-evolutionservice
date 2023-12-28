@@ -8,49 +8,22 @@ using Tgs.ServiceUtility;
 
 namespace Tgs.GameInterface.EvolutionService.GrpcServices;
 
-public class GameInterfaceEvoGrpcService : GameInterfaceEvoService.GameInterfaceEvoServiceBase
+public class GameInterfaceEvoGrpcService(
+    ILogger<GameInterfaceEvoGrpcService> logger,
+    IGetService<GetLiveDealerGameUrlQuery, GameUrlResult> getLiveDealerGameUrlService,
+    IGetService<GetSlotGameUrlQuery, GameUrlResult> getSlotGameUrlService,
+    IGetService<CreditQuery, CreditResult> creditService,
+    IGetService<DebitQuery, DebitResult> debitService,
+    IGetService<GetBalanceQuery, BalanceResult> getBalanceService,
+    IGetService<GetPlayerInfoQuery, PlayerInfoResult> getPlayerInfoService,
+    IGetService<GetTransactionInfoQuery, TransactionInfoResult> getTransactionInfoService,
+    IGetService<KickPlayerQuery, bool> kickPlayerService,
+    IGetService<GetGameHistoriesQuery, GameHistoriesResult> getGameHistoryService,
+    IQueryService<GameRecordQuery, GameRecordResult> gameRecordService) : GameInterfaceEvoService.GameInterfaceEvoServiceBase
 {
-    private readonly IGetService<CreditQuery, CreditResult> _creditService;
-    private readonly IGetService<DebitQuery, DebitResult> _debitService;
-    private readonly IQueryService<GameRecordQuery, GameRecordResult> _gameRecordService;
-    private readonly IGetService<GetBalanceQuery, BalanceResult> _getBalanceService;
-    private readonly IGetService<GetGameHistoriesQuery, GameHistoriesResult> _getGameHistoryService;
-    private readonly IGetService<GetLiveDealerGameUrlQuery, GameUrlResult> _getLiveDealerGameUrlService;
-    private readonly IGetService<GetPlayerInfoQuery, PlayerInfoResult> _getPlayerInfoService;
-    private readonly IGetService<GetSlotGameUrlQuery, GameUrlResult> _getSlotGameUrlService;
-    private readonly IGetService<GetTransactionInfoQuery, TransactionInfoResult> _getTransactionInfoService;
-    private readonly IGetService<KickPlayerQuery, bool> _kickPlayerService;
-    private readonly ILogger<GameInterfaceEvoGrpcService> _logger;
-
-    public GameInterfaceEvoGrpcService(
-        ILogger<GameInterfaceEvoGrpcService> logger,
-        IGetService<GetLiveDealerGameUrlQuery, GameUrlResult> getLiveDealerGameUrlService,
-        IGetService<GetSlotGameUrlQuery, GameUrlResult> getSlotGameUrlService,
-        IGetService<CreditQuery, CreditResult> creditService,
-        IGetService<DebitQuery, DebitResult> debitService,
-        IGetService<GetBalanceQuery, BalanceResult> getBalanceService,
-        IGetService<GetPlayerInfoQuery, PlayerInfoResult> getPlayerInfoService,
-        IGetService<GetTransactionInfoQuery, TransactionInfoResult> getTransactionInfoService,
-        IGetService<KickPlayerQuery, bool> kickPlayerService,
-        IGetService<GetGameHistoriesQuery, GameHistoriesResult> getGameHistoryService,
-        IQueryService<GameRecordQuery, GameRecordResult> gameRecordService)
-    {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _getLiveDealerGameUrlService = getLiveDealerGameUrlService ?? throw new ArgumentNullException(nameof(getLiveDealerGameUrlService));
-        _getSlotGameUrlService = getSlotGameUrlService ?? throw new ArgumentNullException(nameof(getSlotGameUrlService));
-        _creditService = creditService ?? throw new ArgumentNullException(nameof(creditService));
-        _debitService = debitService ?? throw new ArgumentNullException(nameof(debitService));
-        _getBalanceService = getBalanceService ?? throw new ArgumentNullException(nameof(getBalanceService));
-        _getPlayerInfoService = getPlayerInfoService ?? throw new ArgumentNullException(nameof(getPlayerInfoService));
-        _getTransactionInfoService = getTransactionInfoService ?? throw new ArgumentNullException(nameof(getTransactionInfoService));
-        _kickPlayerService = kickPlayerService ?? throw new ArgumentNullException(nameof(kickPlayerService));
-        _getGameHistoryService = getGameHistoryService ?? throw new ArgumentNullException(nameof(getGameHistoryService));
-        _gameRecordService = gameRecordService ?? throw new ArgumentNullException(nameof(gameRecordService));
-    }
-
     public override Task<CheckingServiceReply> CheckingService(CheckingServiceRequest request, ServerCallContext context)
     {
-        _logger.LogWarning("LogOn:{logOn} Message: Create a check connection.({machineName})", DateTime.Now.ToString("o"), request.MachineName);
+        logger.LogWarning("LogOn:{logOn} Message: Create a check connection.({machineName})", DateTime.Now.ToString("o"), request.MachineName);
 
         return Task.FromResult(new CheckingServiceReply
         {
@@ -62,7 +35,7 @@ public class GameInterfaceEvoGrpcService : GameInterfaceEvoService.GameInterface
     {
         var apiUrl = new Uri(request.ApiUrl);
 
-        var response = await _debitService.GetAsync(new DebitQuery(
+        var response = await debitService.GetAsync(new DebitQuery(
             apiUrl,
             request.AgentId,
             request.PlayerCode,
@@ -85,7 +58,7 @@ public class GameInterfaceEvoGrpcService : GameInterfaceEvoService.GameInterface
     {
         var apiUrl = new Uri(request.ApiUrl);
 
-        var response = await _creditService.GetAsync(new CreditQuery(
+        var response = await creditService.GetAsync(new CreditQuery(
             apiUrl,
             request.AgentId,
             request.PlayerCode,
@@ -114,7 +87,7 @@ public class GameInterfaceEvoGrpcService : GameInterfaceEvoService.GameInterface
             StartTime: request.StartTime.ToDateTimeOffset(),
             EndTime: request.EndTime.ToDateTimeOffset());
 
-        var gameRecords = await _gameRecordService
+        var gameRecords = await gameRecordService
             .QueryAsync(
             query: query,
             cancellationToken: context.CancellationToken)
@@ -150,7 +123,7 @@ public class GameInterfaceEvoGrpcService : GameInterfaceEvoService.GameInterface
     {
         var apiUrl = new Uri(request.ApiUrl);
 
-        var response = await _getBalanceService.GetAsync(new GetBalanceQuery(
+        var response = await getBalanceService.GetAsync(new GetBalanceQuery(
             apiUrl,
             request.AgentId,
             request.PlayerCode));
@@ -170,7 +143,7 @@ public class GameInterfaceEvoGrpcService : GameInterfaceEvoService.GameInterface
     {
         var apiUrl = new Uri(request.ApiUrl);
 
-        var response = await _getGameHistoryService.GetAsync(new GetGameHistoriesQuery(
+        var response = await getGameHistoryService.GetAsync(new GetGameHistoriesQuery(
             apiUrl,
             request.CasinoId,
             request.GameHistoryApiToken,
@@ -199,7 +172,7 @@ public class GameInterfaceEvoGrpcService : GameInterfaceEvoService.GameInterface
         var ua2AuthenticationUrl = new Uri(request.Ua2AuthenticationUrl);
         var platformType = (PlatformType)request.PlatformType;
 
-        var response = await _getLiveDealerGameUrlService.GetAsync(new GetLiveDealerGameUrlQuery(
+        var response = await getLiveDealerGameUrlService.GetAsync(new GetLiveDealerGameUrlQuery(
             ua2AuthenticationUrl,
             request.BrandCode,
             request.PlayerCode,
@@ -225,7 +198,7 @@ public class GameInterfaceEvoGrpcService : GameInterfaceEvoService.GameInterface
     {
         var apiUrl = new Uri(request.ApiUrl);
 
-        var response = await _getPlayerInfoService.GetAsync(new GetPlayerInfoQuery(
+        var response = await getPlayerInfoService.GetAsync(new GetPlayerInfoQuery(
             apiUrl,
             request.AgentId,
             request.PlayerCode));
@@ -248,7 +221,7 @@ public class GameInterfaceEvoGrpcService : GameInterfaceEvoService.GameInterface
         var ua2AuthenticationUrl = new Uri(request.Ua2AuthenticationUrl);
         var platformType = (PlatformType)request.PlatformType;
 
-        var response = await _getSlotGameUrlService.GetAsync(new GetSlotGameUrlQuery(
+        var response = await getSlotGameUrlService.GetAsync(new GetSlotGameUrlQuery(
             ua2AuthenticationUrl,
             request.BrandCode,
             request.PlayerCode,
@@ -275,7 +248,7 @@ public class GameInterfaceEvoGrpcService : GameInterfaceEvoService.GameInterface
     {
         var apiUrl = new Uri(request.ApiUrl);
 
-        var response = await _getTransactionInfoService.GetAsync(new GetTransactionInfoQuery(
+        var response = await getTransactionInfoService.GetAsync(new GetTransactionInfoQuery(
             apiUrl,
             request.AgentId,
             request.PlayerCode,
@@ -301,7 +274,7 @@ public class GameInterfaceEvoGrpcService : GameInterfaceEvoService.GameInterface
     {
         var apiUrl = new Uri(request.ApiUrl);
 
-        var response = await _kickPlayerService.GetAsync(new KickPlayerQuery(
+        var response = await kickPlayerService.GetAsync(new KickPlayerQuery(
             apiUrl,
             request.CasinoId,
             request.ApiToken,

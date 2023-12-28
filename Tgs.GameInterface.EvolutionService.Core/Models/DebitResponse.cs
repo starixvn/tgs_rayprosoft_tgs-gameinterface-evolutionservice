@@ -7,15 +7,14 @@ namespace Tgs.GameInterface.EvolutionService.Core.Models;
 public class DebitResponse
 {
     [XmlElement("datetime")]
-#pragma warning disable IDE1006 // 命名樣式
-    public string _Datetime { get; init; } = default!;
-#pragma warning restore IDE1006 // 命名樣式
+    public string DebitDatetime { get; init; } = default!;
+
 
     [XmlElement("balance")]
     public decimal Balance { get; init; }
 
     [XmlIgnore]
-    public DateTime Datetime => DateTime.ParseExact(_Datetime, "ddd MMM dd HH:mm:ss UTC yyyy", CultureInfo.InvariantCulture);
+    public DateTime Datetime => DateTime.ParseExact(DebitDatetime, "ddd MMM dd HH:mm:ss UTC yyyy", CultureInfo.InvariantCulture);
 
     [XmlElement("errormsg")]
     public string? ErrorMessage { get; init; }

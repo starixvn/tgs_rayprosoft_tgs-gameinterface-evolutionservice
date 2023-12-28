@@ -2,18 +2,11 @@
 
 namespace Tgs.GameInterface.EvolutionService.Core.ApplicationServices;
 
-internal class KickPlayerQueryService : IGetService<KickPlayerQuery, bool>
+internal class KickPlayerQueryService(IGameApiClient client) : IGetService<KickPlayerQuery, bool>
 {
-    private readonly IGameApiClient _client;
-
-    public KickPlayerQueryService(IGameApiClient client)
-    {
-        _client = client ?? throw new ArgumentNullException(nameof(client));
-    }
-
     public async ValueTask<bool> GetAsync(KickPlayerQuery query, CancellationToken cancellationToken = default)
     {
-        return await _client.KickPlayerAsync(
+        return await client.KickPlayerAsync(
             query.ApiUrl,
             query.CasinoId,
             query.ApiToken,

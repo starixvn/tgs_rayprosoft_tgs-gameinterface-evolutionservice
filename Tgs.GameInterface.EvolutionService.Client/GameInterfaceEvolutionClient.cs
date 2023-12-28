@@ -4,13 +4,8 @@ using Tgs.GameInterface.EvolutionService.Protos;
 
 namespace Tgs.GameInterface.EvolutionService.Client;
 
-public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
+public class GameInterfaceEvolutionClient(GameInterfaceEvoService.GameInterfaceEvoServiceClient client) : IGameInterfaceEvolutionClient
 {
-    private readonly GameInterfaceEvoService.GameInterfaceEvoServiceClient _client;
-
-    public GameInterfaceEvolutionClient(GameInterfaceEvoService.GameInterfaceEvoServiceClient client)
-        => _client = client;
-
     public async ValueTask<string> CheckingServiceAsync(string machineName, CancellationToken cancellationToken = default)
     {
         var request = new CheckingServiceRequest
@@ -18,7 +13,7 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
             MachineName = machineName,
         };
 
-        var reply = await _client
+        var reply = await client
             .CheckingServiceAsync(
                 request: request,
                 cancellationToken: cancellationToken)
@@ -33,7 +28,7 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
         string playerCode,
         string transactionId,
         decimal amount, CancellationToken cancellationToken = default)
-        => await _client.FundInAsync(new()
+        => await client.FundInAsync(new()
         {
             ApiUrl = apiUrl.ToString(),
             AgentId = agentId,
@@ -48,7 +43,7 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
         string playerCode,
         string transactionId, decimal amount,
         CancellationToken cancellationToken = default)
-        => await _client.FundOutAsync(new()
+        => await client.FundOutAsync(new()
         {
             ApiUrl = apiUrl.ToString(),
             AgentId = agentId,
@@ -73,7 +68,7 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
             StartTime = startTime.ToTimestamp(),
             EndTime = endTime.ToTimestamp()
         };
-        var reply = await _client
+        var reply = await client
             .GameRecordAsync(
             request: request,
             cancellationToken: cancellationToken)
@@ -98,7 +93,7 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
         string agentId,
         string playerCode,
         CancellationToken cancellationToken = default)
-        => await _client.GetBalanceAsync(new()
+        => await client.GetBalanceAsync(new()
         {
             ApiUrl = apiUrl.ToString(),
             AgentId = agentId,
@@ -112,7 +107,7 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
         DateTimeOffset startDate,
         DateTimeOffset endDate,
         CancellationToken cancellationToken = default)
-        => await _client.GetGameHistoriesAsync(new()
+        => await client.GetGameHistoriesAsync(new()
         {
             ApiUrl = apiUrl.ToString(),
             CasinoId = casinoId,
@@ -131,7 +126,7 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
         string externalCultureCode,
         string externalCurrencyCode,
         CancellationToken cancellationToken = default)
-        => await _client.GetLiveDealerGameUrlAsync(new()
+        => await client.GetLiveDealerGameUrlAsync(new()
         {
             Ua2AuthenticationUrl = ua2AuthenticationUrl.ToString(),
             BrandCode = brandCode,
@@ -148,7 +143,7 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
         string agentId,
         string playerCode,
         CancellationToken cancellationToken = default)
-        => await _client.GetPlayerInfoAsync(new()
+        => await client.GetPlayerInfoAsync(new()
         {
             ApiUrl = apiUrl.ToString(),
             AgentId = agentId,
@@ -166,7 +161,7 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
         string externalCurrencyCode,
         string externalGameId,
         CancellationToken cancellationToken = default)
-        => await _client.GetSlotGameUrlAsync(new()
+        => await client.GetSlotGameUrlAsync(new()
         {
             Ua2AuthenticationUrl = ua2AuthenticationUrl.ToString(),
             BrandCode = brandCode,
@@ -185,7 +180,7 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
         string playerCode,
         string transactionId,
         CancellationToken cancellationToken = default)
-        => await _client.GetTransactionInfoAsync(new()
+        => await client.GetTransactionInfoAsync(new()
         {
             ApiUrl = apiUrl.ToString(),
             AgentId = agentId,
@@ -200,7 +195,7 @@ public class GameInterfaceEvolutionClient : IGameInterfaceEvolutionClient
         string uuid,
         string playerCode,
         CancellationToken cancellationToken = default)
-        => await _client.KickPlayerAsync(new()
+        => await client.KickPlayerAsync(new()
         {
             ApiUrl = apiUrl.ToString(),
             CasinoId = casinoId,

@@ -4,29 +4,20 @@ using Tgs.ServiceUtility;
 
 namespace Tgs.GameInterface.EvolutionService.Core.ApplicationServices;
 
-internal class GameRecordQueryService : IQueryService<GameRecordQuery, GameRecordResult>
+internal class GameRecordQueryService(
+    IAuthorization authorization,
+    IGameApiClient client) : IQueryService<GameRecordQuery, GameRecordResult>
 {
-    private readonly IAuthorization _authorization;
-    private readonly IGameApiClient _client;
-
-    public GameRecordQueryService(
-        IAuthorization authorization,
-        IGameApiClient client)
-    {
-        _authorization = authorization ?? throw new ArgumentNullException(nameof(authorization));
-        _client = client ?? throw new ArgumentNullException(nameof(client));
-    }
-
     public async IAsyncEnumerable<GameRecordResult> QueryAsync(
         GameRecordQuery query,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        var authorization = _authorization.GetAuthorization(query.CasinoId, query.GameHistoryApiToken);
+        var autho = authorization.GetAuthorization(query.CasinoId, query.GameHistoryApiToken);
 
-        var gameHistories = await _client
+        var gameHistories = await client
             .GetGameHistoryAsync(
             query.ApiUrl,
-            authorization,
+            autho,
             query.StartTime,
             query.EndTime,
             cancellationToken)
