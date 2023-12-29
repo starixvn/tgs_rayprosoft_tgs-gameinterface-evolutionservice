@@ -11,7 +11,7 @@ data:
         "LogLevel": {
           "Default": "Warning",
           "Microsoft.AspNetCore": "Warning",
-          "Tgs.GameInterface.Cards365.Core": "Information"
+          "Tgs.GameInterface.EvolutionService.Core": "Information"
         }
       },
       "Kestrel": {
