@@ -7,16 +7,16 @@ namespace Tgs.GameInterface.EvolutionService.Core.UnitTest;
 
 public class TransactionInfoUnitTest
 {
-    [Fact]
-    public async Task Can_Get_Transaction_Info()
-    {
-        var apiUrl = new Uri("http://localhost");
-        var cCode = "GUI";
-        var ecId = "ecId";
-        var playerCode = "4ucmqplxb029";
-        var transactionsId = "transactionsId";
+	[Fact]
+	public async Task Can_Get_Transaction_Info()
+	{
+		var apiUrl = new Uri("http://localhost");
+		var cCode = "GUI";
+		var ecId = "ecId";
+		var playerCode = "4ucmqplxb029";
+		var transactionsId = "transactionsId";
 
-        var response = @"
+		var response = @"
                 <transaction>
                 <result>Y</result>
                 <balance>1483.3354</balance>
@@ -30,21 +30,21 @@ public class TransactionInfoUnitTest
                 <amount>133.1354</amount>
                 </transaction>";
 
-        var handler = new MockHttpMessageHandler();
-        _ = handler.Expect(HttpMethod.Get, "/api/ecashier")
-            .WithQueryString("cCode", cCode)
-            .WithQueryString("ecID", ecId)
-            .WithQueryString("euID", playerCode)
-            .WithQueryString("eTransID", transactionsId)
-            .WithQueryString("output", "1")
-            .Respond(HttpStatusCode.OK, new StringContent(response, Encoding.UTF8, "application/xml"));
+		var handler = new MockHttpMessageHandler();
+		_ = handler.Expect(HttpMethod.Get, "/api/ecashier")
+			.WithQueryString("cCode", cCode)
+			.WithQueryString("ecID", ecId)
+			.WithQueryString("euID", playerCode)
+			.WithQueryString("eTransID", transactionsId)
+			.WithQueryString("output", "1")
+			.Respond(HttpStatusCode.OK, new StringContent(response, Encoding.UTF8, "application/xml"));
 
-        var fakeHttpClient = handler.ToHttpClient();
-        var fakeLog = NullLogger<GameApiClient>.Instance;
-        var client = new GameApiClient(fakeHttpClient, fakeLog);
+		var fakeHttpClient = handler.ToHttpClient();
+		var fakeLog = NullLogger<GameApiClient>.Instance;
+		var client = new GameApiClient(fakeHttpClient, fakeLog);
 
-        var result = await client.GetTransactionInfoAsync(apiUrl, cCode, ecId, playerCode, transactionsId, default);
+		var result = await client.GetTransactionInfoAsync(apiUrl, cCode, ecId, playerCode, transactionsId, default);
 
-        Assert.Equal(playerCode, result.EuId);
-    }
+		Assert.Equal(playerCode, result.EuId);
+	}
 }

@@ -2,5 +2,5 @@
 
 public record GameHistoriesResponse
 {
-    public IEnumerable<GameHistoryRecordResponse> GameHistoryRecords { get; init; } = default!;
+	public IEnumerable<GameHistoryRecordResponse> GameHistoryRecords { get; init; } = default!;
 }

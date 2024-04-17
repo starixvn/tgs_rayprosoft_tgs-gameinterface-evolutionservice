@@ -4,23 +4,23 @@ namespace Tgs.GameInterface.EvolutionService.Core.ApplicationServices;
 
 internal class GetPlayerInfoQueryService(IGameApiClient client) : IGetService<GetPlayerInfoQuery, PlayerInfoResult>
 {
-    public async ValueTask<PlayerInfoResult> GetAsync(GetPlayerInfoQuery query, CancellationToken cancellationToken = default)
-    {
-        var result = await client.GetPlayerInfoAsync(
-            query.ApiUrl,
-            "GUI",
-            query.AgentId,
-            query.PlayerCode,
-            cancellationToken).ConfigureAwait(false);
+	public async ValueTask<PlayerInfoResult> GetAsync(GetPlayerInfoQuery query, CancellationToken cancellationToken = default)
+	{
+		var result = await client.GetPlayerInfoAsync(
+			query.ApiUrl,
+			"GUI",
+			query.AgentId,
+			query.PlayerCode,
+			cancellationToken).ConfigureAwait(false);
 
-        return new(
-            result.EmailAddress,
-            result.Firstname,
-            result.Lastname,
-            result.ScreenName,
-            result.CountryCode,
-            result.EuId,
-            result.Uid,
-            result.ErrorMessage);
-    }
+		return new(
+			result.EmailAddress,
+			result.Firstname,
+			result.Lastname,
+			result.ScreenName,
+			result.CountryCode,
+			result.EuId,
+			result.Uid,
+			result.ErrorMessage);
+	}
 }

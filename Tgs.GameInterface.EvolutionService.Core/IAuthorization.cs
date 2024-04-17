@@ -2,5 +2,5 @@
 
 public interface IAuthorization
 {
-    public string GetAuthorization(string casinoId, string gameHistoryApiToken);
+	public string GetAuthorization(string casinoId, string gameHistoryApiToken);
 }
