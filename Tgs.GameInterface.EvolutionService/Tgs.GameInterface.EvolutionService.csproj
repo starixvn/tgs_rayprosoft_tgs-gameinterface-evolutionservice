@@ -33,16 +33,10 @@
 		<PackageReference Include="System.Linq.Async" Version="6.0.1" />
 		<PackageReference Include="Tgs.Interceptors" Version="0.2.1" />
 	</ItemGroup>
-	<ItemGroup>
-		<Protobuf Include="Protos\gameinterfaceevoservice.proto" GrpcServices="Server" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Tgs.GameInterface.EvolutionService.Core\Tgs.GameInterface.EvolutionService.Core.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Protobuf Update="Protos\gameinterfaceevoservice.proto" GrpcServices="Server" />
+		<ProjectReference Include="..\Tgs.GameInterface.EvolutionService.Protos\Tgs.GameInterface.EvolutionService.Protos.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
